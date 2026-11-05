@@ -1,5 +1,12 @@
 # Testing
 
+## 0.7.2 desktop layout and artwork validation
+
+- Native UI tests verify that all primary controls fit at 980 × 780, that narrow layouts stack, that smaller windows scroll to the final controls, and that expansion resets the scroll offset. A missing-engine status also fits the default layout.
+- Resize regression checks observe full-card invalidation at widths 700, 980, 1200 and 1300. A live isolated preview was resized smaller and maximized on this Windows desktop; the repeated decorative border trails did not recur. Live preview suppresses conversion and preference writes.
+- `tests/test-brand-assets.py` uses Pillow to check all seven ICO image sizes for centered circular transparency and agreement with the desktop PNG. Real controls/Help/Donate were rendered and visually checked in both themes; screenshot exports remain outside in-app Help.
+- Existing UI behavior, geometry, protected-rendering, documentation/QR integrity, installer upgrade/repair/rollback and portable offscreen tests are rerun for the release. Display scaling on other monitors and optical 3D remain target-machine checks. macOS/Linux are still experimental and untested on their native operating systems.
+
 ## 0.7.1 installer validation
 
 - `tests/test-controls-install.ps1` runs the real install/uninstall scripts with destinations redirected into temporary folders and an isolated registry key. It checks read-only preflight, missing-Hub guidance, controls-only install/repair/removal without elevation, no Samsung-folder writes or deletions, preserved settings, promotion to full installation, engine-hash enforcement and refusal to split a full app/worker update. Engine compatibility is simulated only for the promotion step; no Samsung engine is loaded.

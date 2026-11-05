@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.2 — Clean resizing and engraved desktop artwork
+
+- Fix repeated border fragments during resizing by repainting the full decorated desktop surface, including cards, viewport, banner, sliders and window frame.
+- Fit all primary controls into a 980 × 780 logical-pixel default window at normal scaling. Put Source & input beside Depth & pop-out, group startup/window behavior underneath, and retain stacked panels and scrolling in smaller windows.
+- Add a heavier black outer frame, dark-gold title-bar/card borders, ivory surfaces and serif headings. Keep light and dark themes and internal Help/Donate.
+- Replace the broad metallic word art with fine serif lettering, engraved outlines and scrollwork. Redraw the mathematical medallion as a balanced complete circle with outlined `2n` / `+1`, concentric rings and turquoise accents; supersample every ICO size and remove edge spill.
+- Refresh the GitHub screenshots and written layout guidance. Preserve donation QR data, version-aware full/controls-only installation, preferences and the Windows conversion/overlay/click-through implementation.
+- macOS/Linux bundles receive shared branding and documentation; their runtime is unchanged and remains **experimental and untested on those operating systems**.
+
 ## 0.7.1 — Visible setup errors and controls-only installation
 
 - Keep prerequisite and elevated-installation errors in the original launcher console. Check prerequisites before UAC and reject elevation under a different Windows account.

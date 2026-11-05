@@ -6,7 +6,7 @@
 
 <p align="center"><a href="#install">Download & install</a> · <a href="#a-look-inside">Interface gallery</a> · <a href="Documentation/README.md">Illustrated Help</a> · <a href="#requirements">Dependencies</a> · <a href="Documentation/PLATFORMS.md">macOS / Linux</a></p>
 
-**0.7.1 (2026-11-05):** Installer errors now stay visible. Use **Install-GUI.cmd** to install just the Windows desktop controls without Odyssey Hub, or **Install.cmd** for the full converter. Written Help, illustrated GitHub documentation and sponsorship remain included. **macOS and Linux versions are experimental, not tested on those operating systems, and have limited stereo-format conversion; Samsung AI and calibrated Odyssey output remain Windows-only.**
+**0.7.2 (2026-11-05):** Clean resizing, a compact two-column Windows layout, stronger black/dark-gold framing, an engraved serif wordmark and a clean circular mathematical icon. Both installer modes and in-place updates remain available. **macOS and Linux are experimental and not tested on those systems; they receive the shared artwork/docs, while this layout update is for the Windows app.**
 
 <p align="center"><a href="https://github.com/sponsors/Zhandragon"><img src="Documentation/assets/sponsor-button.svg" width="252" height="48" alt="Sponsor on GitHub" /></a><br/><sub>Support continued Any2Odd development · <a href="Documentation/DONATIONS.md">Donation options</a></sub></p>
 
@@ -22,7 +22,7 @@ It works around Odyssey 3D Hub's normal fullscreen/video-window workflow by feed
 
 ## A look inside
 
-**Windows controls, in light and dark.** Choose the source and input format, tune depth/pop-out, then use **Apply settings / restart conversion**. The checked automatic-start preference means "when this app opens"; the installer does not add Windows sign-in startup.
+**Windows controls, in light and dark.** The default 980 × 780 logical-pixel window fits the controls at normal display scaling. Source and depth sit side by side, with behavior options below. Narrow windows stack the panels; smaller work areas and larger scaling can still use scrolling. Choose the source and input format, tune depth/pop-out, then use **Apply settings / restart conversion**. The checked automatic-start preference means "when this app opens"; the installer does not add Windows sign-in startup.
 
 | Light | Dark |
 | --- | --- |
@@ -100,7 +100,7 @@ Later, install the supported Samsung setup and run **Install.cmd** from the same
 ### Full Windows 3D converter
 
 1. Install and configure Samsung Odyssey 3D Hub and verify that its ordinary 3D playback works. See [Samsung's setup guidance](https://www.samsung.com/uk/support/displays/how-to-use-3d-on-the-odyssey-3d-gaming-monitor/).
-2. Download `Any2Odd-0.7.1-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
+2. Download `Any2Odd-0.7.2-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
 3. Stop Samsung's separate 3D player. The installer requests a clean shutdown of a running Any2Odd and waits for its worker. If it cannot stop, quit Any2Odd from its tray and retry.
 4. Double-click **Install.cmd** and approve elevation **using the same Windows account** as the existing installation. Alternatively, open **64-bit PowerShell as administrator**, change to the extracted folder, and run:
 
@@ -122,15 +122,15 @@ For a read-only package/engine compatibility check, run `powershell.exe -NoProfi
 
 | Platform | Release asset | After extraction |
 | --- | --- | --- |
-| Windows x64, full converter or controls only | [Windows installer ZIP](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.1/Any2Odd-0.7.1-windows-x64.zip) | `Install.cmd` or `Install-GUI.cmd` |
-| macOS 13+, Intel / Apple silicon — experimental | [macOS launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.1/Any2Odd-0.7.1-macos-experimental.zip) | `Launch-macOS.command` |
-| Linux x86-64, glibc 2.34+ — experimental | [Linux launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.1/Any2Odd-0.7.1-linux-experimental.tar.gz) | `sh launch-linux.sh` |
+| Windows x64, full converter or controls only | [Windows installer ZIP](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.2/Any2Odd-0.7.2-windows-x64.zip) | `Install.cmd` or `Install-GUI.cmd` |
+| macOS 13+, Intel / Apple silicon — experimental | [macOS launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.2/Any2Odd-0.7.2-macos-experimental.zip) | `Launch-macOS.command` |
+| Linux x86-64, glibc 2.34+ — experimental | [Linux launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.2/Any2Odd-0.7.2-linux-experimental.tar.gz) | `sh launch-linux.sh` |
 
 The portable launchers create a private virtual environment and download pinned Qt wheels on first launch. Read [setup and limits](portable/START-HERE.md) and the [platform capability matrix](Documentation/PLATFORMS.md). These bundles have no native macOS/Linux acceptance testing. The offline/shared-code tests were run on Windows only.
 
 ## Updating an existing installation
 
-**Upgrade from 0.5.0, 0.6.0 or 0.7.0 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.7.1`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place. Use `Install-GUI.cmd` to update a controls-only installation without adding conversion.
+**Upgrade from 0.5.0 through 0.7.1 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.7.2`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place. Use `Install-GUI.cmd` to update a controls-only installation without adding conversion.
 
 `VERSION` is the single release-version source. The installer checks it against the packaged executable, reads the installed executable version (with registry/manifest fallbacks), and distinguishes a new install, upgrade and same-version repair. It refuses to replace a newer version unless you explicitly use `-AllowDowngrade`. Failed file or registration updates attempt to restore the previous installation; if rollback cannot finish, the error identifies the retained backup folder. Shared Samsung-folder dependencies keep their existing ownership status.
 
@@ -191,7 +191,7 @@ cd Any2Odd
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-The build uses the .NET Framework C# compiler and Windows WinMetadata already on the machine; Visual Studio is not needed. `restore.ps1` downloads four **SharpDX 4.2.0** packages from NuGet, checks pinned SHA-256 hashes, and extracts their .NET 4.5 assemblies. SharpDX is an archived project. The icon and metallic wordmark are generated from `IconMaker.cs`. Small icons use a simplified `+1` mark; larger assets use `2n + 1`. No external font files are bundled.
+The build uses the .NET Framework C# compiler and Windows WinMetadata already on the machine; Visual Studio is not needed. `restore.ps1` downloads four **SharpDX 4.2.0** packages from NuGet, checks pinned SHA-256 hashes, and extracts their .NET 4.5 assemblies. SharpDX is an archived project. The circular medallion and engraved serif wordmark are generated from `IconMaker.cs`, with outlined lettering, concentric rings, fine scrollwork and turquoise accents. Icons are supersampled, with transparent pixels outside the circle at every ICO size. Small icons use a simplified `+1` mark; larger assets use `2n + 1`. No external font files are bundled.
 
 Output: `build\Any2Odd.exe` plus four SharpDX DLLs. Donation QR images are embedded in the executable. The UI lives in `MainWindow.cs`, `DesktopTheme.cs`, `DesktopControls.cs`, `HelpContent.cs` and `DonationWindow.cs`; the capture and overlay surfaces do not inherit the desktop chrome. `python tools/export-guide.py` regenerates the self-contained offline HTML and GitHub illustrated guide from `Documentation/help.json`. The written catalog is embedded in Windows Help and reused by the portable frontend; screenshots are only for the GitHub pages. Use `package.ps1` to create the distributable ZIP and its checksum. All source needed to build Any2Odd is in this repository. The build produces a functionally equivalent executable; byte-for-byte reproducibility across machines/compiler metadata is not claimed.
 

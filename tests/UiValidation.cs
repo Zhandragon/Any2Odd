@@ -14,13 +14,30 @@ class UiValidation {
  static object Invoke(object target,string name,params object[] args){return target.GetType().GetMethod(name,Flags).Invoke(target,args);}
  static void Check(bool condition,string message){if(!condition)throw new Exception(message);Console.WriteLine("PASS: "+message);}
  static System.Collections.Generic.IEnumerable<Control> Descendants(Control parent){foreach(Control c in parent.Controls){yield return c;foreach(var child in Descendants(c))yield return child;}}
+ static void ValidateResponsive(Form form){
+  var page=(Control)Field(form,"controlsPage");var viewport=(Control)Field(page,"viewport");var content=(Control)Field(page,"content");var bar=(Control)Field(page,"scrollbar");
+  Action arrange=delegate{form.PerformLayout();Invoke(page,"Arrange");Application.DoEvents();};
+  form.Size=new Size(980,780);arrange();
+  Check(!bar.Enabled&&content.Height<=viewport.Height,"Default 980 x 780 layout shows every control without scrolling");
+  Check(Descendants(page).OfType<TableLayoutPanel>().Where(c=>c.GetType().Name=="ResponsiveGrid").All(c=>c.ColumnCount==2),"Default settings and behavior use two columns");
+  var section=Descendants(page).First(c=>c.GetType().Name=="SectionPanel");bool repainted=false;section.Invalidated+=delegate(object sender,InvalidateEventArgs e){if(e.InvalidRect.Contains(section.ClientRectangle))repainted=true;};
+  foreach(var size in new[]{new Size(1200,850),new Size(700,580),new Size(1300,900),new Size(980,780)}){
+   repainted=false;form.Size=size;arrange();Check(repainted,"Resize invalidates the full decorated card at width "+size.Width);
+   Check(Descendants(page).OfType<ComboBox>().All(c=>c.Width>180),"Resized input selectors remain usable at width "+size.Width);
+  }
+  ((Label)Field(form,"status")).Text="Samsung's conversion engine is missing.";arrange();Check(!bar.Enabled,"Missing-engine status also fits the default layout");
+  form.Size=new Size(700,580);arrange();Check(bar.Enabled,"Compact windows retain scrolling");Invoke(page,"ScrollBy",10000);
+  Check((int)page.GetType().GetProperty("ScrollOffset").GetValue(page,null)>0&&content.Bottom<=viewport.Height,"Compact scrolling reaches the final controls and version");
+  form.Size=new Size(980,780);arrange();Check(!bar.Enabled&&content.Top==0,"Expansion clears the scroll offset and restores the complete page");
+  ((Label)Field(form,"status")).Text="Ready";
+ }
  static void RenderOffscreen(Form form,Assembly assembly){
-  var host=new UserControl{Size=new Size(850,940)};form.TopLevel=false;form.TopMost=false;form.Dock=DockStyle.Fill;host.Controls.Add(form);host.CreateControl();form.Show();
+  var host=new UserControl{Size=new Size(980,780)};form.TopLevel=false;form.TopMost=false;form.Dock=DockStyle.Fill;host.Controls.Add(form);host.CreateControl();form.Show();
   var windows=(ComboBox)Field(form,"windows");windows.Items.Clear();windows.Items.Add("Choose a window in Selected window mode");windows.SelectedIndex=0;
   var theme=assembly.GetType("OdysseyCompanion.DesktopTheme");var setDark=theme.GetMethod("SetDark",BindingFlags.Static|BindingFlags.Public);var body=(Control)Field(form,"Body");var controls=(Control)Field(form,"controlsPage");
   Action back=delegate{};var donate=(Panel)Activator.CreateInstance(assembly.GetType("OdysseyCompanion.DonationPanel"),Flags,null,new object[]{back},null);body.Controls.Add(donate);donate.Visible=false;
   foreach(bool dark in new[]{false,true}){setDark.Invoke(null,new object[]{dark,false});
-   foreach(bool donation in new[]{false,true}){controls.Visible=!donation;donate.Visible=donation;(donation?(Control)donate:controls).BringToFront();form.Size=new Size(850,940);form.PerformLayout();var handle=form.Handle;foreach(Control c in Descendants(form).Where(c=>c.GetType().Name=="ScrollSurface"))Invoke(c,"Arrange");
+   foreach(bool donation in new[]{false,true}){controls.Visible=!donation;donate.Visible=donation;(donation?(Control)donate:controls).BringToFront();form.Size=new Size(980,780);form.PerformLayout();var handle=form.Handle;foreach(Control c in Descendants(form).Where(c=>c.GetType().Name=="ScrollSurface"))Invoke(c,"Arrange");
     using(var bitmap=new Bitmap(form.Width,form.Height)){form.DrawToBitmap(bitmap,new Rectangle(Point.Empty,form.Size));bitmap.Save(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,(donation?"donate-":"controls-")+(dark?"dark":"light")+".png"));}
    }
   }
@@ -59,6 +76,7 @@ class UiValidation {
    if(args.Contains("--headless")){ValidateHeadless(form,assembly);form.Dispose();return 0;}
    form.Show();Application.DoEvents();
    Check(form.FormBorderStyle==FormBorderStyle.None,"Custom desktop chrome is active");
+   ValidateResponsive(form);
    Check(Field(form,"worker")==null,"Showing controls does not start a renderer in validation mode");
    var depth=(TrackBar)Field(form,"depth");var pop=(TrackBar)Field(form,"pop");Check(depth.Minimum==0&&depth.Maximum==200&&pop.Minimum==-100&&pop.Maximum==100,"Original depth and pop-out ranges retained");
    depth.Value=133;pop.Value=-25;Check(((Label)Field(form,"depthValue")).Text=="1.33"&&((Label)Field(form,"popValue")).Text=="-0.25","Slider readouts update correctly");

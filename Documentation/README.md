@@ -2,7 +2,7 @@
 
 # Illustrated Help
 
-Any2Odd 0.7.1 · Windows edition reference, with a separate experimental macOS/Linux topic.
+Any2Odd 0.7.2 · Windows edition reference, with a separate experimental macOS/Linux topic.
 
 [Repository](../README.md) · [Platform support](PLATFORMS.md) · [Donations](DONATIONS.md)
 
@@ -28,11 +28,15 @@ Any2Odd provides continuous desktop capture and controls for Samsung's installed
 
 The installer does not add Any2Odd to Windows sign-in startup. Launching the app and starting Windows are separate events. The default shown in the repository screenshots is an unsaved preview; the screenshot preview never starts conversion.
 
-Use the Source & input and Depth & behavior sections on the Controls page to adjust conversion. After changing capture, input, depth, pop-out or overlay preferences, click Apply settings / restart conversion. Help and Donate stay inside the controls window.
+Use the Source & input, Depth & pop-out and Startup & window behavior sections on the Controls page to adjust conversion. After changing capture, input, depth, pop-out or overlay preferences, click Apply settings / restart conversion. Help and Donate stay inside the controls window.
 
 **CONTROLS WITHOUT A 3D SETUP**
 
 Install-GUI.cmd installs the Windows controls, tray, Help and Donate without Hub or a Samsung display. It cannot perform 3D conversion. Automatic conversion still uses the normal prerequisite checks and reports the missing engine/worker; it leaves 3D off. Uncheck Convert automatically when this app opens if you only want to explore the controls. Later, install the supported Samsung setup and run Install.cmd to add full conversion without losing preferences.
+
+**DEFAULT LAYOUT**
+
+The Windows controls open at 980 × 780 logical pixels. Source and depth settings sit side by side, with startup/window behavior below; all controls fit at the default size and normal display scaling. Narrower windows stack the settings, and shorter windows scroll with the themed bar or mouse wheel. On a smaller work area or with larger display scaling, Windows may constrain the initial window and scrolling remains available.
 
 [Samsung monitor setup](https://www.samsung.com/uk/support/displays/how-to-use-3d-on-the-odyssey-3d-gaming-monitor/)
 
@@ -66,7 +70,7 @@ Capture defaults to Whole desktop. In that mode, Source window is intentionally 
 
 ## Input, depth & pop-out
 
-[![Depth & behavior: numeric tuning, Apply, automatic conversion, recovery, tray and overlay preferences.](assets/settings-light.png)](assets/settings-light.png)
+[![Depth & pop-out: numeric tuning and Apply settings / restart conversion. Startup and window behavior are grouped separately below.](assets/settings-light.png)](assets/settings-light.png)
 
 **2D → 3D AUTOMATICALLY (AI)**
 
@@ -100,7 +104,7 @@ AI is the default for ordinary images. Side-by-side is for content that already 
 
 ## Overlay & click-through
 
-[![Keep 3D above apps changes output positioning. Use Apply to update the active worker.](assets/settings-light.png)](assets/settings-light.png)
+[![Startup & window behavior includes Keep 3D above apps. Use Apply settings / restart conversion in the depth panel after changing it.](assets/behavior-light.png)](assets/behavior-light.png)
 
 The 3D output passes mouse input through to the real desktop or game. Any2Odd does not intercept Escape as a stop command. Use Ctrl+Alt+F10 to toggle conversion.
 
@@ -148,11 +152,15 @@ Alt+F4 — close (honors the tray preference)
 
 Quit completely always stops conversion and exits. Help and Donate are internal panels in the same controls window and do not pause the worker. Use Controls to return. The Light / Dark button changes the desktop theme without restarting conversion; its choice is saved separately in ui-settings.json.
 
+**RESPONSIVE CONTROLS**
+
+Source & input and Depth & pop-out use two columns at the default width and stack when the window is narrower. Startup & window behavior follows beneath them. The default window fits the controls at normal scaling; scrolling remains available at smaller sizes. Resizing changes only the desktop layout, never capture or projection geometry.
+
 <a id="automation"></a>
 
 ## Automatic start & recovery
 
-[![Automatic conversion, recovery and tray preferences are enabled by default.](assets/settings-light.png)](assets/settings-light.png)
+[![Startup & window behavior: automatic conversion, recovery, minimize-to-tray and overlay positioning.](assets/behavior-light.png)](assets/behavior-light.png)
 
 **CONVERT AUTOMATICALLY WHEN THIS APP OPENS**
 
@@ -344,7 +352,7 @@ Opens %LOCALAPPDATA%\Odyssey3DCompanion. companion.log records application event
 
 [![Donate is an internal page; Sponsor on GitHub opens the same maintainer profile as the repository button.](assets/donate-light.png)](assets/donate-light.png)
 
-**UPDATING FROM 0.5.0, 0.6.0 OR 0.7.0**
+**UPDATING FROM 0.5.0 THROUGH 0.7.1**
 
 Download the new prebuilt Any2Odd ZIP from GitHub Releases and extract the entire package to a new folder. Run Install.cmd, or run install.ps1 in 64-bit administrator PowerShell using the same Windows account as the existing installation. Do not uninstall first.
 

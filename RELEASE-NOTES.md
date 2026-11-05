@@ -1,35 +1,29 @@
-# Any2Odd 0.7.1
+# Any2Odd 0.7.2
 
-Fixes the installer hiding its actual error and adds a Windows controls-only installation for PCs without Odyssey Hub or a Samsung 3D display.
+Fixes decorative border trails while resizing, fits the Windows controls into a more organized default window, and refines the artwork and light/dark framing.
 
-## Choose your download
+## Desktop changes
 
-| Platform | Asset | Start after extraction |
+- Full repainting of decorated controls during resize removes the repeated border fragments.
+- A **980 × 780 logical-pixel default window** shows all primary controls at normal display scaling. Source & input and Depth & pop-out sit side by side; startup/window behavior is grouped underneath. Narrow windows stack the panels, and scrolling remains available for smaller work areas or larger scaling.
+- A heavier black outer frame, darker gold title-bar/card borders, ivory surfaces and serif headings give the light theme stronger definition. Dark mode uses the same framing and artwork.
+- A new engraved serif wordmark and circular mathematical medallion use outlined `2n` / `+1`, fine scrollwork, concentric rings and turquoise accents. All seven icon sizes have centered circular transparency and no decoration outside the circle.
+- Refreshed GitHub screenshots and written layout documentation. Help remains text-only inside the app; Donate remains an internal panel with unchanged QR images and destinations.
+
+**Capture, projection, overlay placement, click-through, renderer lifecycle, hotkeys and conversion settings are unchanged.**
+
+## Downloads and upgrades
+
+| Platform | Asset | Run after fully extracting |
 | --- | --- | --- |
-| Windows x64 | `Any2Odd-0.7.1-windows-x64.zip` | `Install-GUI.cmd` for controls only; `Install.cmd` for full conversion |
-| macOS 13+, Intel / Apple silicon — **experimental, not tested on macOS** | `Any2Odd-0.7.1-macos-experimental.zip` | `Launch-macOS.command` |
-| Linux x86-64, glibc 2.34+ — **experimental, not tested on Linux** | `Any2Odd-0.7.1-linux-experimental.tar.gz` | `sh launch-linux.sh` |
+| Windows x64 | `Any2Odd-0.7.2-windows-x64.zip` | `Install-GUI.cmd` without Hub; `Install.cmd` for the full Samsung converter |
+| macOS 13+, Intel / Apple silicon — **experimental, not tested on macOS** | `Any2Odd-0.7.2-macos-experimental.zip` | `Launch-macOS.command` |
+| Linux x86-64, glibc 2.34+ — **experimental, not tested on Linux** | `Any2Odd-0.7.2-linux-experimental.tar.gz` | `sh launch-linux.sh` |
 
-Each archive has a matching `.sha256` file. Extract the whole archive before running a launcher; GitHub's automatic Source code downloads require a build.
+Each archive has a matching `.sha256` file. Upgrade existing Windows installations **without uninstalling**; the installer preserves preferences and reports upgrade/repair. Use the same mode as the existing installation. Controls-only setup installs no renderer and cannot perform 3D; full setup still requires the supported Samsung engine and display. The 0.7.1 visible-error reporting fix is retained.
 
-## Windows setup fix
-
-- Both launchers keep the underlying error visible in the original console. Full setup checks prerequisites before requesting elevation and reports failures from the elevated installer. Elevation under a different Windows account is refused.
-- **Without Odyssey Hub:** run **Install-GUI.cmd**. It installs the themed desktop controls, tray, written Help and internal Donate, with desktop/Start menu shortcuts and an Installed apps entry. No administrator access, Samsung screen or Hub is needed; Windows 11 x64 24H2+ and the existing .NET runtime baseline still apply.
-- **Controls-only mode cannot convert to 3D.** It installs no worker and does not change Samsung's folders. Automatic conversion still checks prerequisites and leaves 3D off with a missing-engine/worker message. You may uncheck automatic conversion while exploring the controls.
-- **On the 3D computer:** use **Install.cmd** with the supported Samsung Hub installed. Upgrade from **0.5.0, 0.6.0 or 0.7.0 without uninstalling**. App/worker versions update together; preferences, logs and the original Samsung settings backup remain intact.
-- A controls-only installation can later become a full installation: configure the supported Samsung setup and run **Install.cmd** from the same or a newer release. Controls-only repair/removal needs no elevation and leaves Samsung files alone.
-
-Written Help and offline documentation explain both modes. Screenshots remain only in the [GitHub README and illustrated guide](https://github.com/Zhandragon/Any2Odd/blob/main/Documentation/README.md). Donation QR images and destinations are unchanged.
-
-Windows capture, projection, click-through, overlay handling, renderer lifecycle and global shortcuts remain unchanged. Full 3D retains the exact Samsung engine compatibility check.
-
-## Experimental macOS and Linux
-
-**Experimental and not tested on macOS or Linux.** Their runtime code is unchanged from 0.7.0; these bundles carry the updated version and written documentation. They are Python/Qt source launch bundles, not native self-contained installers. Provide Python 3.10–3.13; first launch downloads pinned PySide6 6.10.1 wheels into an application-local environment.
-
-They offer themed controls/tray, written Help/Donate, SBS image viewing, red/cyan anaglyph conversion, eye swapping and PNG export. Optional live capture requires separate source/output screens; Wayland live output is disabled. Native permissions, capture, focus, tray and click-through remain untested. **They do not implement Samsung AI depth, eye tracking or calibrated G90XF output.** Ordinary 2D stays flat. See [setup and limits](https://github.com/Zhandragon/Any2Odd/blob/main/portable/START-HERE.md).
+macOS/Linux receive the shared artwork and documentation. Their Python/Qt runtime is unchanged, remains experimental and untested on those operating systems, and does not implement Samsung AI or calibrated Odyssey output. See [portable setup and limits](https://github.com/Zhandragon/Any2Odd/blob/main/portable/START-HERE.md).
 
 ## Validation
 
-Windows build, headless UI/Help resources, geometry, documentation consistency and protected-rendering checks passed. Isolated installer tests cover controls-only install/repair/removal, promotion to full installation, engine checks, legacy upgrades, rollback, settings preservation and error delivery. UAC/elevated failure is simulated in the launcher test; no actual host installation or new optical 3D test was performed. This development PC has no Odyssey Hub, Samsung display or Any2C1. macOS/Linux have no native acceptance testing.
+Windows build, UI behavior and layout tests, full-card resize invalidation checks, geometry, protected-rendering comparison, all icon sizes, documentation/QR integrity, isolated installer upgrade/repair/rollback and portable offscreen tests passed. A live Windows preview was resized and maximized without the border trails. No new optical 3D test or native macOS/Linux test was performed; other-monitor DPI behavior remains a target-machine check.

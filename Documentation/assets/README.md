@@ -2,7 +2,7 @@
 
 The Windows screenshots are renders of the actual release's WinForms widgets, produced by `tools/DocumentationScreenshots.cs` in an unattached child-control host. The injected preview preferences use fresh-install defaults, including automatic conversion enabled, but preview mode suppresses worker startup, hotkey registration and preference writes. The source-window text is a neutral placeholder. No personal desktop or live conversion content is captured.
 
-`controls`, `source`, `settings`, `help` and `donate` have light/dark variants. Source and settings panels are rendered directly from the same real control tree, not drawn mockups. The screenshots explain controls; they do not establish optical 3D or target-OS operation. Any portable screenshot is labeled as the Qt frontend rendered offscreen on Windows, not as a capture from a Mac or Linux desktop.
+`controls`, `source`, `settings`, `behavior`, `help` and `donate` have light/dark variants. Controls use the 980 × 780 default layout; the Donate capture uses a taller window to show all four codes. Source, depth and behavior panels are rendered directly from the same real control tree, not drawn mockups. The screenshots explain controls; they do not establish optical 3D or target-OS operation. Any portable screenshot is labeled as the Qt frontend rendered offscreen on Windows, not as a capture from a Mac or Linux desktop.
 
 Build the Windows helper after `build.ps1`:
 

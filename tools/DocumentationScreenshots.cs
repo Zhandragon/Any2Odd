@@ -21,7 +21,7 @@ class DocumentationScreenshots {
   var assembly=Assembly.LoadFrom(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Any2Odd.exe"));
   var preferences=Activator.CreateInstance(assembly.GetType("OdysseyCompanion.Preferences"));
   using(var form=(Form)Activator.CreateInstance(assembly.GetType("OdysseyCompanion.MainForm"),Flags,null,new[]{preferences,(object)true},null))
-  using(var host=new UserControl{Size=new Size(850,1080)}){
+  using(var host=new UserControl{Size=new Size(980,780)}){
    form.TopLevel=false;form.TopMost=false;form.Dock=DockStyle.Fill;host.Controls.Add(form);host.CreateControl();form.Show();
    var tray=(NotifyIcon)Field(form,"tray");tray.Visible=false;
    var windows=(ComboBox)Field(form,"windows");windows.Items.Clear();windows.Items.Add("Choose a window in Selected window mode");windows.SelectedIndex=0;
@@ -31,9 +31,9 @@ class DocumentationScreenshots {
     string suffix=dark?"-dark.png":"-light.png";
     Save(form,Path.Combine(output,"controls"+suffix));
     var sections=Children((Control)Field(form,"controlsPage")).Where(c=>c.GetType().Name=="SectionPanel").ToArray();
-    Save(sections[1],Path.Combine(output,"source"+suffix));Save(sections[2],Path.Combine(output,"settings"+suffix));
-    Invoke(form,"ShowDonation");Arrange(form);Save(form,Path.Combine(output,"donate"+suffix));
-    Invoke(form,"ShowHelp","input");Arrange(form);Save(form,Path.Combine(output,"help"+suffix));
+    Save(sections[1],Path.Combine(output,"source"+suffix));Save(sections[2],Path.Combine(output,"settings"+suffix));Save(sections[3],Path.Combine(output,"behavior"+suffix));
+    host.Size=new Size(980,1400);Invoke(form,"ShowDonation");Arrange(form);Save(form,Path.Combine(output,"donate"+suffix));
+    host.Size=new Size(980,780);Invoke(form,"ShowHelp","input");Arrange(form);Save(form,Path.Combine(output,"help"+suffix));
    }
    if(Field(form,"worker")!=null)throw new Exception("Documentation capture must not start rendering.");
   }

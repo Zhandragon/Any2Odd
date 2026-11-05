@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace OdysseyCompanion {
  // Theme/chrome are restricted to desktop controls, never capture/output surfaces.
  static class DesktopTheme {
-  static readonly string[] Light={"#EEE7DC","#F8F3EA","#DED1BC","#202224","#625E59","#1F6F82","#A87D32","#E4CA88","#7B5A22","#E6DCCB","#D9CBB3"};
+  static readonly string[] Light={"#EEE8DC","#F8F4EA","#DED0B4","#232727","#625E54","#236F7C","#967028","#E7CE90","#654A19","#E6DCC9","#D7C7A8"};
   static readonly string[] Night={"#111315","#1C1E20","#302D27","#F2ECE2","#B7AFA4","#7CC4D3","#B0863A","#D6BA70","#BC9451","#2A2D2F","#363A3D"};
   static Color[] colors=Palette(false);
   public static bool Dark{get;private set;}
@@ -23,7 +23,7 @@ namespace OdysseyCompanion {
   static Color Remap(Color value,Color[] old){for(int i=0;i<old.Length;i++)if(value.ToArgb()==old[i].ToArgb())return colors[i];return value;}
   public static void ApplyCurrent(Control control){Recolor(control,Palette(!Dark));}
   static void Recolor(Control control,Color[] old){control.BackColor=Remap(control.BackColor,old);control.ForeColor=Remap(control.ForeColor,old);if(control.ContextMenuStrip!=null){control.ContextMenuStrip.BackColor=Panel;control.ContextMenuStrip.ForeColor=Text;}foreach(Control child in control.Controls)Recolor(child,old);control.Invalidate(true);}
-  public static Font Display(float size){return new Font("Copperplate Gothic Light",size,FontStyle.Regular);}
+  public static Font Display(float size){return new Font("Palatino Linotype",size,FontStyle.Bold);}
   public static Button Button(string text,EventHandler action){var b=new GoldButton{Text=text,AutoSize=true,AutoSizeMode=AutoSizeMode.GrowAndShrink,FlatStyle=FlatStyle.Flat,Padding=new Padding(13,7,13,7),BackColor=ButtonColor,ForeColor=Text,Font=Display(9),Margin=new Padding(0,4,8,4),Cursor=Cursors.Hand,UseVisualStyleBackColor=false};b.Click+=action;return b;}
   public static ContextMenuStrip Menu(){var menu=new ContextMenuStrip{Renderer=new GoldMenuRenderer(),BackColor=Panel,ForeColor=Text,Font=new Font("Segoe UI",10),ShowImageMargin=false,ShowCheckMargin=true,Padding=new Padding(9,10,9,10)};menu.Opening+=delegate{menu.BackColor=Panel;menu.ForeColor=Text;foreach(ToolStripItem item in menu.Items){item.ForeColor=Text;item.Padding=new Padding(7,4,7,4);}};menu.SizeChanged+=delegate{if(menu.Width>2&&menu.Height>2)using(var path=Round(new RectangleF(0,0,menu.Width,menu.Height),12)){var old=menu.Region;menu.Region=new Region(path);if(old!=null)old.Dispose();}};return menu;}
   public static void Open(string destination,IWin32Window owner){try{System.Diagnostics.Process.Start(destination);}catch(Exception e){MessageBox.Show(owner,"Could not open this item.\n\n"+e.Message,"Any2Odd",MessageBoxButtons.OK,MessageBoxIcon.Information);}}
@@ -33,9 +33,10 @@ namespace OdysseyCompanion {
    for(int side=-1;side<=1;side+=2){g.DrawBezier(gold,cx+side*7,y,cx+side*18,y+9,cx+side*32,y-9,cx+side*span,y);g.DrawBezier(shine,cx+side*14,y+2,cx+side*26,y+12,cx+side*39,y-4,cx+side*(span+10),y+2);g.DrawArc(gold,cx+side*20-5,y-5,10,10,side<0?20:160,270);}
    g.DrawEllipse(gold,cx-4,y-4,8,8);g.FillEllipse(turquoise,cx-2,y-2,4,4);
   }}
-  public static void BorderLines(Graphics g,Rectangle r,bool flourish){if(r.Width<20||r.Height<20)return;g.SmoothingMode=SmoothingMode.AntiAlias;using(var path=Round(new RectangleF(r.X+1,r.Y+1,r.Width-3,r.Height-3),16))using(var inner=Round(new RectangleF(r.X+4,r.Y+4,r.Width-9,r.Height-9),13))using(var gold=new Pen(Gold,1.5f))using(var shine=new Pen(Shine,1)){g.DrawPath(gold,path);g.DrawPath(shine,inner);}
+  public static void BorderLines(Graphics g,Rectangle r,bool flourish){if(r.Width<20||r.Height<20)return;g.SmoothingMode=SmoothingMode.AntiAlias;using(var path=Round(new RectangleF(r.X+2,r.Y+2,r.Width-5,r.Height-5),12))using(var inner=Round(new RectangleF(r.X+5,r.Y+5,r.Width-11,r.Height-11),9))using(var dark=new Pen(Dark?Color.FromArgb(10,12,13):Color.FromArgb(51,43,29),3.2f))using(var gold=new Pen(Gold,1.5f))using(var shine=new Pen(Shine,.8f)){g.DrawPath(dark,path);g.DrawPath(gold,path);g.DrawPath(shine,inner);}
    if(flourish&&r.Width>210){Flourish(g,r.Left+r.Width/2f,r.Top+5,48);Flourish(g,r.Left+r.Width/2f,r.Bottom-6,30);using(var p=new Pen(Gold,1)){foreach(int side in new[]{-1,1}){float x=side<0?r.Left+12:r.Right-12;float y=r.Top+15;g.DrawBezier(p,x,y+22,x+side*6,y+6,x-side*22,y+10,x-side*30,y+1);g.DrawArc(p,x-6,y+12,12,12,side<0?0:180,250);}}}
   }
+  public static void WindowFrame(Graphics g,Rectangle r){if(r.Width<24||r.Height<24)return;g.SmoothingMode=SmoothingMode.AntiAlias;using(var outside=Round(new RectangleF(3,3,r.Width-7,r.Height-7),15))using(var inside=Round(new RectangleF(8,8,r.Width-17,r.Height-17),11))using(var highlight=Round(new RectangleF(10,10,r.Width-21,r.Height-21),9))using(var black=new Pen(Color.FromArgb(25,27,27),7))using(var gold=new Pen(Border,2))using(var light=new Pen(Shine,.8f)){g.DrawPath(black,outside);g.DrawPath(gold,inside);g.DrawPath(light,highlight);}}
  }
  sealed class GoldButton:Button {
   bool hover,pressed;public bool Primary;
@@ -55,14 +56,14 @@ namespace OdysseyCompanion {
   public override Color ToolStripDropDownBackground{get{return DesktopTheme.Panel;}}public override Color ImageMarginGradientBegin{get{return DesktopTheme.Panel;}}public override Color ImageMarginGradientMiddle{get{return DesktopTheme.Panel;}}public override Color ImageMarginGradientEnd{get{return DesktopTheme.Panel;}}public override Color MenuItemSelected{get{return DesktopTheme.Hover;}}public override Color MenuItemBorder{get{return DesktopTheme.Gold;}}public override Color MenuBorder{get{return DesktopTheme.Gold;}}
  }
  class DesktopForm:Form {
-  protected readonly Panel Body=new Panel{Dock=DockStyle.Fill};
-  protected readonly FlowLayoutPanel TitleActions=new FlowLayoutPanel{Dock=DockStyle.Right,AutoSize=true,FlowDirection=FlowDirection.LeftToRight,WrapContents=false,Padding=new Padding(0,4,8,0)};
+  protected readonly Panel Body=new DesktopPanel{Dock=DockStyle.Fill};
+  protected readonly FlowLayoutPanel TitleActions=new FlowLayoutPanel{Dock=DockStyle.Right,AutoSize=true,FlowDirection=FlowDirection.LeftToRight,WrapContents=false,Padding=new Padding(0,0,8,0)};
   readonly Panel titlebar;readonly Label caption;readonly ToolTip tips=new ToolTip();
   [DllImport("user32.dll")]static extern bool ReleaseCapture();[DllImport("user32.dll")]static extern IntPtr SendMessage(IntPtr h,int message,IntPtr w,IntPtr l);
   protected int Dpi(int value){return (int)Math.Round(value*DeviceDpi/96.0);}
   public DesktopForm(){
-   AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;Font=new Font("Segoe UI",10);BackColor=DesktopTheme.Background;ForeColor=DesktopTheme.Text;FormBorderStyle=FormBorderStyle.None;Padding=new Padding(9);DoubleBuffered=true;StartPosition=FormStartPosition.CenterParent;MinimumSize=new Size(560,420);
-   Icon=Icon.ExtractAssociatedIcon(typeof(DesktopForm).Assembly.Location);titlebar=new Panel{Dock=DockStyle.Top,Height=52,BackColor=DesktopTheme.Header};
+   AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;Font=new Font("Segoe UI",10);BackColor=DesktopTheme.Background;ForeColor=DesktopTheme.Text;FormBorderStyle=FormBorderStyle.None;Padding=new Padding(12);DoubleBuffered=true;SetStyle(ControlStyles.ResizeRedraw,true);StartPosition=FormStartPosition.CenterParent;MinimumSize=new Size(560,420);
+   Icon=Icon.ExtractAssociatedIcon(typeof(DesktopForm).Assembly.Location);titlebar=new DesktopPanel{Dock=DockStyle.Top,Height=54,BackColor=DesktopTheme.Header,Padding=new Padding(6,3,6,5)};titlebar.Paint+=delegate(object sender,PaintEventArgs e){DesktopTheme.BorderLines(e.Graphics,titlebar.ClientRectangle,false);using(var pen=new Pen(DesktopTheme.Border,2.5f))e.Graphics.DrawLine(pen,12,titlebar.Height-5,titlebar.Width-13,titlebar.Height-5);};
    caption=new Label{Text="ANY2ODD",Font=DesktopTheme.Display(10),Dock=DockStyle.Fill,TextAlign=ContentAlignment.MiddleLeft,Padding=new Padding(14,0,0,0),AutoEllipsis=true};
    titlebar.Controls.Add(caption);titlebar.Controls.Add(TitleActions);Controls.Add(Body);Controls.Add(titlebar);
    foreach(Control control in new Control[]{titlebar,caption}){control.MouseDown+=delegate(object sender,MouseEventArgs e){if(e.Button==MouseButtons.Left){ReleaseCapture();SendMessage(Handle,0xA1,new IntPtr(2),IntPtr.Zero);}};control.DoubleClick+=delegate{ToggleMaximize();};}
@@ -72,19 +73,19 @@ namespace OdysseyCompanion {
   protected void ChromeButton(string text,string help,Action action){var b=DesktopTheme.Button(text,delegate{action();});b.Font=new Font("Segoe UI",11);b.AutoSize=false;b.Size=new Size(34,34);b.Padding=Padding.Empty;b.Margin=new Padding(3,4,0,0);b.AccessibleName=help;tips.SetToolTip(b,help);TitleActions.Controls.Add(b);}
   protected void StandardChrome(Action trayAction){ChromeButton("—","Minimize",delegate{WindowState=FormWindowState.Minimized;});ChromeButton("□","Maximize / restore",ToggleMaximize);if(trayAction!=null)ChromeButton("▾","Minimize to tray",trayAction);ChromeButton("×","Close",Close);}
   void ToggleMaximize(){if(!MaximizeBox)return;MaximizedBounds=Screen.FromControl(this).WorkingArea;WindowState=WindowState==FormWindowState.Maximized?FormWindowState.Normal:FormWindowState.Maximized;}
-  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);DesktopTheme.BorderLines(e.Graphics,ClientRectangle,true);}
+  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);DesktopTheme.WindowFrame(e.Graphics,ClientRectangle);}
   protected override void WndProc(ref Message m){base.WndProc(ref m);if(m.Msg==0x84&&WindowState==FormWindowState.Normal){long raw=m.LParam.ToInt64();var pt=PointToClient(new Point(unchecked((short)(raw&0xffff)),unchecked((short)((raw>>16)&0xffff))));int edge=Dpi(9);bool l=pt.X<edge,r=pt.X>=Width-edge,t=pt.Y<edge,b=pt.Y>=Height-edge;int hit=t?(l?13:r?14:12):b?(l?16:r?17:15):l?10:r?11:0;if(hit!=0)m.Result=new IntPtr(hit);}}
   protected override void Dispose(bool disposing){if(disposing)tips.Dispose();base.Dispose(disposing);}
  }
- sealed class SectionPanel:Panel {
-  public SectionPanel(){BackColor=DesktopTheme.Panel;Padding=new Padding(20,20,20,18);Margin=new Padding(0,7,0,7);DoubleBuffered=true;AutoSize=true;AutoSizeMode=AutoSizeMode.GrowAndShrink;}
+ sealed class SectionPanel:DesktopPanel {
+  public SectionPanel(){BackColor=DesktopTheme.Panel;Padding=new Padding(16,16,16,14);Margin=new Padding(0,5,0,5);AutoSize=true;AutoSizeMode=AutoSizeMode.GrowAndShrink;}
   protected override void OnPaintBackground(PaintEventArgs e){e.Graphics.Clear(Parent==null?DesktopTheme.Background:Parent.BackColor);e.Graphics.SmoothingMode=SmoothingMode.AntiAlias;using(var path=DesktopTheme.Round(new RectangleF(1,1,Width-3,Height-3),16))using(var brush=new SolidBrush(BackColor))e.Graphics.FillPath(brush,path);}
   protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);DesktopTheme.BorderLines(e.Graphics,ClientRectangle,true);}
  }
  sealed class BrandBanner:Control {
   readonly Image wordmark;
-  public BrandBanner(){Height=96;DoubleBuffered=true;using(var stream=typeof(BrandBanner).Assembly.GetManifestResourceStream("Any2Odd.Wordmark.png")){if(stream!=null)using(var image=Image.FromStream(stream))wordmark=new Bitmap(image);}AccessibleName="Any2Odd — 2n maps to 2n plus 1";}
-  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);if(wordmark!=null){float height=Math.Min(Height,100),width=wordmark.Width*height/wordmark.Height;e.Graphics.InterpolationMode=InterpolationMode.HighQualityBicubic;e.Graphics.DrawImage(wordmark,new RectangleF(0,0,Math.Min(Width,width),height));}}
+  public BrandBanner(){Height=86;DoubleBuffered=true;SetStyle(ControlStyles.ResizeRedraw,true);using(var stream=typeof(BrandBanner).Assembly.GetManifestResourceStream("Any2Odd.Wordmark.png")){if(stream!=null)using(var image=Image.FromStream(stream))wordmark=new Bitmap(image);}AccessibleName="Any2Odd — 2n maps to 2n plus 1";}
+  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);if(wordmark!=null){float scale=Math.Min((Height-4)/(float)wordmark.Height,Width/(float)wordmark.Width);float width=wordmark.Width*scale,height=wordmark.Height*scale;e.Graphics.InterpolationMode=InterpolationMode.HighQualityBicubic;e.Graphics.DrawImage(wordmark,new RectangleF(0,(Height-height)/2,width,height));if(Width-width>235*DeviceDpi/96){using(var f=new Font("Segoe UI",9))TextRenderer.DrawText(e.Graphics,"CONTINUOUS DESKTOP 3D\nEscape stays with your game.",f,new Rectangle((int)width+20,10,Width-(int)width-24,Height-20),DesktopTheme.Muted,TextFormatFlags.Right|TextFormatFlags.VerticalCenter);}}}
   protected override void Dispose(bool disposing){if(disposing&&wordmark!=null)wordmark.Dispose();base.Dispose(disposing);}
  }
 }
