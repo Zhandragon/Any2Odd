@@ -30,3 +30,24 @@ The 0.5.0 changes concern branding, documentation and packaging; the capture pip
 6. Apply depth settings; ensure conversion resumes. Quit completely and verify the native worker exits.
 
 Capture frame rate or CPU submission time is not the final stereo-output frame rate or input-to-photon latency. Optical depth and perceived latency still require a person at the monitor.
+
+## 0.6.0 validation
+
+- Rebuilt with the Windows .NET Framework compiler and SHA-256-pinned SharpDX packages.
+- Geometry and monitor/source-isolation self-test passed. `tests/verify-rendering-unchanged.py` compares capture, projection, overlay, worker and IPC code to tag `v0.5.0`.
+- `tests/UiValidation.cs` checks the release assembly using injected unsaved preferences. It validates tuning ranges/readouts, tray restore/close semantics, internal Help/Donate, embedded resources, light/dark selection and persistence, layout at multiple widths and custom scrolling. It never starts a renderer. The default suite hosts the form as a child of an isolated control; `--headless` tests construction and layout; `--render` renders the light/dark pages in that host. `--preview` explicitly opens the real desktop preview without startup conversion.
+- Light and dark controls/donation pages were rendered and inspected. Earlier desktop checks covered window chrome, Help and donation assets. Final design checks used the isolated control host. Native monitor-edge snapping, multi-DPI monitor movement and optical 3D should still be checked on the target setup.
+- `tests/test-installer.ps1 -LegacyExecutable <0.5.0 exe>` checks real legacy version detection, install/upgrade/repair decisions, downgrade rejection/override, successful app/worker replacement, failure rollback, and unchanged preferences/Samsung files.
+- `tests/test-install-flow.ps1 -LegacyZip <0.5.0 release zip>` runs the installer with the actual published package in isolated temporary folders/registry keys. Samsung engine compatibility, elevation and process discovery are simulated; file installation, version registration, dependency ownership, shortcuts and repeated repair run normally. `-CheckOnly` leaves the old installation untouched.
+- Original PortalAI QR PNG hashes match `assets/donations/PROVENANCE.json`. Their original bytes are embedded in the executable; presentation crops only the supplied screenshot framing on crypto codes, retaining modules and quiet zones.
+
+This development computer has no Samsung engine or 3D monitor. The real installer preflight correctly stops at the missing-engine check. No claim is made of a new optical 3D run on 0.6.0; the protected rendering code remains the 0.5.0 code.
+
+Build the UI test runner after `build.ps1`:
+
+```powershell
+& "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /nologo /target:exe /platform:x64 /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:build\UiValidation.exe tests\UiValidation.cs
+Start-Process .\build\UiValidation.exe -Wait -PassThru
+```
+
+Before release on the G90XF: verify native title-bar dragging/resizing, tray restore, both palettes, all Help topics, donation copying, and then the hardware checks above. Confirm that an in-place update from 0.5.0 retains your depth, pop-out, input mode and tray preferences.

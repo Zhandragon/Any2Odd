@@ -14,7 +14,6 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
 [assembly: System.Reflection.AssemblyTitle("Any2Odd")]
-[assembly: System.Reflection.AssemblyVersion("0.5.0.0")]
 [assembly: System.Reflection.AssemblyProduct("Any2Odd")]
 [assembly: System.Reflection.AssemblyDescription("Continuous desktop 3D for Samsung Odyssey G90XF")]
 
@@ -156,42 +155,10 @@ namespace OdysseyCompanion {
    }}catch(Exception e){Files.Log(e.ToString());report("Renderer error: "+e.Message);return 1;}
   }
  }
- sealed class MainForm:Form {
-  Preferences pref=Preferences.Load();NotifyIcon tray;Label status,depthValue,popValue;Button toggle;ComboBox mode,format,windows;TrackBar depth,pop;CheckBox auto,recover,minimize,keepOverlay;Process worker;EventWaitHandle stopEvent,restoreEvent;bool wanted=false,exiting=false,changing=false;int failures=0;DateTime retryAfter=DateTime.MinValue;System.Windows.Forms.Timer heartbeat=new System.Windows.Forms.Timer();
-  public MainForm(){
-   Text="Any2Odd";Size=new System.Drawing.Size(720,810);MinimumSize=new System.Drawing.Size(680,750);StartPosition=FormStartPosition.CenterScreen;TopMost=true;BackColor=Color.FromArgb(17,24,39);ForeColor=Color.FromArgb(229,237,247);Font=new Font("Segoe UI",10);Icon=Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-   var layout=new TableLayoutPanel{Dock=DockStyle.Fill,Padding=new Padding(26),ColumnCount=1,RowCount=14,AutoScroll=true};Controls.Add(layout);
-   Add(layout,new Label{Text="Any2Odd",Font=new Font("Segoe UI Semibold",18),AutoSize=true,Margin=new Padding(0,0,0,8)});
-   Add(layout,new Label{Text="Continuous 3D. Escape stays with your game.",AutoSize=true,ForeColor=Color.LightSteelBlue});
-   status=new Label{Text="Ready",AutoSize=true,MaximumSize=new System.Drawing.Size(585,70),Margin=new Padding(0,12,0,10)};Add(layout,status);
-   toggle=Button("Turn on 3D",delegate{if(wanted)StopConversion();else StartConversion();});toggle.Height=42;toggle.BackColor=Color.FromArgb(18,100,135);Add(layout,toggle);
-   mode=Combo(new[]{"Whole desktop — constant 3D","Selected window","Follow active window"});mode.SelectedIndex=pref.Mode=="Window"?1:pref.Mode=="Active"?2:0;Add(layout,Row("Capture",mode));
-   format=Combo(new[]{"2D → 3D automatically (AI)","Side-by-side input (manual)"});format.SelectedIndex=pref.SideBySide?1:0;Add(layout,Row("Input format",format));
-   windows=Combo(new string[0]);var sourceRow=Row("Source window",windows);sourceRow.Controls.Add(Button("Refresh",delegate{RefreshWindows();}));Add(layout,sourceRow);RefreshWindows();
-   depth=new TrackBar{Minimum=0,Maximum=200,Value=(int)Math.Round(Math.Max(0,Math.Min(2,pref.Depth))*100),TickFrequency=25,Width=320,Height=40};depthValue=new Label{AutoSize=true,Text=pref.Depth.ToString("0.00")};var dr=Row("Depth strength",depth);dr.Controls.Add(depthValue);Add(layout,dr);
-   pop=new TrackBar{Minimum=-100,Maximum=100,Value=(int)Math.Round(Math.Max(-1,Math.Min(1,pref.Popout))*100),TickFrequency=25,Width=320,Height=40};popValue=new Label{AutoSize=true,Text=pref.Popout.ToString("0.00")};var pr=Row("Pop-out",pop);pr.Controls.Add(popValue);Add(layout,pr);
-   depth.ValueChanged+=delegate{depthValue.Text=(depth.Value/100.0).ToString("0.00");};pop.ValueChanged+=delegate{popValue.Text=(pop.Value/100.0).ToString("0.00");};
-   Add(layout,Button("Apply settings / restart conversion",delegate{SavePreferences();if(wanted){StopWorker();StartWorker();}else status.Text="Preferences saved.";}));
-   auto=new CheckBox{Text="Convert automatically when this app opens",Checked=pref.AutoConvert,AutoSize=true};recover=new CheckBox{Text="Recover if the conversion process stops",Checked=pref.Recover,AutoSize=true};minimize=new CheckBox{Text="Minimize and close to the tray",Checked=pref.MinimizeToTray,AutoSize=true};var checks=new FlowLayoutPanel{AutoSize=true,FlowDirection=FlowDirection.TopDown,WrapContents=false};checks.Controls.AddRange(new Control[]{auto,recover,minimize});Add(layout,checks);
-   keepOverlay=new CheckBox{Text="Keep 3D above other apps without taking focus (Apply to change)",Checked=pref.KeepOverlayOnTop,AutoSize=true};checks.Controls.Add(keepOverlay);
-   Add(layout,new Label{Text="Ctrl+Alt+F10: on/off    •    Ctrl+Alt+F9: show controls\nCtrl+Alt+F8: restore overlay without taking game focus\nDepth changes apply with a brief conversion restart. Use borderless games.\nAutomatic stereo-layout detection is not enabled in this build.",AutoSize=true,ForeColor=Color.LightSteelBlue,Margin=new Padding(0,10,0,8)});
-   var links=new FlowLayoutPanel{AutoSize=true};links.Controls.Add(Button("Open guide",delegate{Process.Start(Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"USER-GUIDE.html"));}));links.Controls.Add(Button("View logs",delegate{Process.Start("explorer.exe",Files.Data);}));links.Controls.Add(Button("Quit completely",delegate{Quit();}));Add(layout,links);
-   var menu=new ContextMenuStrip();menu.Items.Add("Show controls",null,delegate{ShowControls();});menu.Items.Add("Turn 3D on / off",null,delegate{if(wanted)StopConversion();else StartConversion();});menu.Items.Add(new ToolStripSeparator());
-   menu.Items.Add("Always convert desktop (AI)",null,delegate{mode.SelectedIndex=0;format.SelectedIndex=0;SavePreferences();StopConversion();StartConversion();});menu.Items.Add("Side-by-side mode",null,delegate{format.SelectedIndex=1;SavePreferences();if(wanted){StopWorker();StartWorker();}});menu.Items.Add("AI conversion mode",null,delegate{format.SelectedIndex=0;SavePreferences();if(wanted){StopWorker();StartWorker();}});menu.Items.Add("Restart conversion",null,delegate{SavePreferences();StopWorker();wanted=true;StartWorker();});menu.Items.Add(new ToolStripSeparator());menu.Items.Add("Quit",null,delegate{Quit();});
-   menu.Items.Insert(2,new ToolStripMenuItem("Restore overlay (Ctrl+Alt+F8)",null,delegate{RestoreOverlay();}));
-   var persistent=new ToolStripMenuItem("Keep overlay above apps"){CheckOnClick=true,Checked=pref.KeepOverlayOnTop};persistent.Click+=delegate{keepOverlay.Checked=persistent.Checked;SavePreferences();if(wanted){StopWorker();StartWorker();}};menu.Items.Insert(3,persistent);menu.Opening+=delegate{persistent.Checked=keepOverlay.Checked;menu.Items[1].Text=wanted?"Turn 3D off":"Turn 3D on";};
-   tray=new NotifyIcon{Icon=Icon,Text="Any2Odd — off",Visible=true,ContextMenuStrip=menu};tray.DoubleClick+=delegate{ShowControls();};
-   Resize+=delegate{if(WindowState==FormWindowState.Minimized&&minimize.Checked)Hide();};FormClosing+=delegate(object s,FormClosingEventArgs e){if(!exiting&&e.CloseReason==CloseReason.UserClosing&&minimize.Checked){e.Cancel=true;SavePreferences();Hide();}else {StopConversion();tray.Visible=false;}};
-   auto.CheckedChanged+=delegate{SavePreferences();};recover.CheckedChanged+=delegate{SavePreferences();};minimize.CheckedChanged+=delegate{SavePreferences();};
-   Shown+=delegate{TaskbarMenu.Install();bool hotkey=Win.RegisterHotKey(Handle,1,0x4003,0x79);bool showKey=Win.RegisterHotKey(Handle,2,0x4003,0x78);bool restoreKey=Win.RegisterHotKey(Handle,3,0x4003,0x77);if(!hotkey||!showKey||!restoreKey){status.Text="One of Ctrl+Alt+F8/F9/F10 is in use. Free the shortcuts before starting 3D.";Files.Log("Hotkey conflict: toggle="+hotkey+" controls="+showKey+" restore="+restoreKey);return;}if(pref.AutoConvert||Program.Start3DRequested)StartConversion();};
-   heartbeat.Interval=250;heartbeat.Tick+=delegate{Poll();};heartbeat.Start();
-  }
-  Button Button(string text,EventHandler action){var b=new Button{Text=text,AutoSize=true,FlatStyle=FlatStyle.Flat,Padding=new Padding(8,4,8,4),BackColor=Color.FromArgb(35,47,65),ForeColor=ForeColor,Margin=new Padding(0,4,8,4)};b.Click+=action;return b;}
-  ComboBox Combo(string[] values){var c=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=350,BackColor=Color.FromArgb(35,47,65),ForeColor=ForeColor};c.Items.AddRange(values);return c;}
-  FlowLayoutPanel Row(string label,Control c){var r=new FlowLayoutPanel{AutoSize=true,WrapContents=false,Margin=new Padding(0,5,0,5)};r.Controls.Add(new Label{Text=label,Width=125,Height=30,TextAlign=ContentAlignment.MiddleLeft});r.Controls.Add(c);return r;}
-  void Add(TableLayoutPanel l,Control c){c.Anchor=AnchorStyles.Left|AnchorStyles.Right;l.Controls.Add(c,0,l.Controls.Count);}
+ sealed partial class MainForm:DesktopForm {
+  Preferences pref;NotifyIcon tray;Label status,depthValue,popValue;Button toggle;ComboBox mode,format,windows;TrackBar depth,pop;CheckBox auto,recover,minimize,keepOverlay;Process worker;EventWaitHandle stopEvent,restoreEvent;bool wanted=false,exiting=false,changing=false;int failures=0;DateTime retryAfter=DateTime.MinValue;System.Windows.Forms.Timer heartbeat=new System.Windows.Forms.Timer();
   void RefreshWindows(){var selected=windows.SelectedItem as WindowChoice;windows.Items.Clear();foreach(var h in Win.Windows(Process.GetCurrentProcess().Id,worker==null?-1:worker.Id)){string title=Win.Title(h);if(title.Length>0&&title!="Program Manager")windows.Items.Add(new WindowChoice{H=h,Name=title});}if(windows.Items.Count>0){windows.SelectedIndex=0;for(int i=0;i<windows.Items.Count;i++)if(selected!=null&&((WindowChoice)windows.Items[i]).H==selected.H)windows.SelectedIndex=i;}}
-  void SavePreferences(){if(changing||auto==null)return;pref.Mode=mode.SelectedIndex==1?"Window":mode.SelectedIndex==2?"Active":"Desktop";pref.SideBySide=format.SelectedIndex==1;pref.Depth=depth.Value/100.0;pref.Popout=pop.Value/100.0;pref.AutoConvert=auto.Checked;pref.Recover=recover.Checked;pref.MinimizeToTray=minimize.Checked;if(keepOverlay!=null)pref.KeepOverlayOnTop=keepOverlay.Checked;pref.Save();}
+  void SavePreferences(){if(preview||changing||auto==null)return;pref.Mode=mode.SelectedIndex==1?"Window":mode.SelectedIndex==2?"Active":"Desktop";pref.SideBySide=format.SelectedIndex==1;pref.Depth=depth.Value/100.0;pref.Popout=pop.Value/100.0;pref.AutoConvert=auto.Checked;pref.Recover=recover.Checked;pref.MinimizeToTray=minimize.Checked;if(keepOverlay!=null)pref.KeepOverlayOnTop=keepOverlay.Checked;pref.Save();}
   void StartConversion(){SavePreferences();wanted=true;failures=0;StartWorker();}
   void StartWorker(){if(worker!=null&&!worker.HasExited)return;string error=Engine.Validate();if(error!=null){status.Text=error;wanted=false;UpdateToggle();return;}SavePreferences();long source=windows.SelectedItem is WindowChoice?((WindowChoice)windows.SelectedItem).H.ToInt64():0;if(pref.Mode=="Window"&&source==0){status.Text="Choose a source window first.";wanted=false;UpdateToggle();return;}
    ReleaseEvents();string name="Local\\OdysseyCompanionStop-"+Guid.NewGuid().ToString("N");stopEvent=new EventWaitHandle(false,EventResetMode.ManualReset,name);restoreEvent=new EventWaitHandle(false,EventResetMode.AutoReset,name+"-restore");
@@ -202,10 +169,10 @@ namespace OdysseyCompanion {
   void StopConversion(){wanted=false;StopWorker();status.Text="3D is off. Your normal desktop is restored.";UpdateToggle();}
   void UpdateToggle(){toggle.Text=wanted?"Turn off 3D":"Turn on 3D";tray.Text="Any2Odd — "+(wanted?"on":"off");}
   void Poll(){if(Program.QuitRequested.WaitOne(0)){Quit();return;}if(Program.ShowRequested.WaitOne(0))ShowControls();if(Program.ToggleRequested.WaitOne(0)){if(wanted)StopConversion();else StartConversion();}if(worker==null){if(wanted&&DateTime.Now>=retryAfter)StartWorker();return;}if(worker.HasExited){int code=worker.ExitCode;worker.Dispose();worker=null;ReleaseEvents();if(wanted&&pref.Recover&&failures<3){failures++;retryAfter=DateTime.Now.AddSeconds(8);status.Text="Conversion stopped ("+code+"). Recovery attempt "+failures+" in 8 seconds.";}else{wanted=false;status.Text="Conversion stopped. Check the USB connection and logs, then turn 3D on again.";UpdateToggle();}}else{try{var d=Files.Json.Deserialize<Dictionary<string,object>>(File.ReadAllText(Path.Combine(Files.Data,"worker-status.json")));if(Convert.ToInt32(d["pid"])==worker.Id)status.Text=Convert.ToString(d["state"]);}catch{}}}
-  void ShowControls(){Show();WindowState=FormWindowState.Normal;TopMost=true;Activate();}
+  void ShowControls(){ShowControlsPage();Show();WindowState=FormWindowState.Normal;TopMost=true;Activate();}
   void Quit(){exiting=true;SavePreferences();StopConversion();tray.Visible=false;Application.Exit();}
   protected override void WndProc(ref Message m){if(m.Msg==0x312){if(m.WParam.ToInt32()==1){if(wanted)StopConversion();else StartConversion();}else if(m.WParam.ToInt32()==2)ShowControls();else if(m.WParam.ToInt32()==3)RestoreOverlay();return;}base.WndProc(ref m);}
-  protected override void Dispose(bool disposing){if(disposing){heartbeat.Dispose();if(tray!=null)tray.Dispose();Win.UnregisterHotKey(Handle,1);Win.UnregisterHotKey(Handle,2);Win.UnregisterHotKey(Handle,3);}base.Dispose(disposing);}
+  protected override void Dispose(bool disposing){if(disposing){DesktopTheme.Changed-=ApplyTheme;heartbeat.Dispose();controlTips.Dispose();if(tray!=null)tray.Dispose();if(appMenu!=null)appMenu.Dispose();if(helpMenu!=null)helpMenu.Dispose();if(IsHandleCreated){Win.UnregisterHotKey(Handle,1);Win.UnregisterHotKey(Handle,2);Win.UnregisterHotKey(Handle,3);}}base.Dispose(disposing);}
  }
  static class Program {
   internal static EventWaitHandle QuitRequested,ToggleRequested,ShowRequested;

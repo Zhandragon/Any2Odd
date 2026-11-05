@@ -1,4 +1,4 @@
-<img src="assets/Any2Odd.png" alt="Any2Odd stereo glasses icon" width="112">
+<img src="assets/Any2Odd-wordmark.png" alt="Any2Odd: 2n maps to 2n plus 1" width="520">
 
 # Any2Odd
 
@@ -15,7 +15,9 @@ It works around Odyssey 3D Hub's normal fullscreen/video-window workflow by feed
 ## Features
 
 - Whole-desktop AI conversion, enabled by default when the app opens.
-- A bright yellow/cyan icon on the desktop, taskbar and notification tray.
+- PortalAI-inspired light and dark themes, rounded controls, gold filigree borders and custom desktop window controls. The theme choice is remembered separately from conversion settings.
+- A mathematical `2n + 1` emblem, engraved wordmark and a readable `+1` variation for small tray icons.
+- A themed tray/window right-click menu, gold scrollbars, internal Help (F1) and Donate panels. Donate uses the same maintainer QR codes as PortalAI, embedded unchanged.
 - Right-click the tray icon to turn 3D on/off, switch input modes, restore the overlay, open controls or quit. The taskbar icon's jump list also has toggle and controls commands.
 - Close/minimize to tray by default; configurable normal minimize behavior.
 - Depth strength and pop-out controls. Applying them briefly restarts conversion.
@@ -48,9 +50,9 @@ A different engine stops installation/conversion with a compatibility message. D
 ## Install
 
 1. Install and configure Samsung Odyssey 3D Hub and verify that its ordinary 3D playback works. See [Samsung's setup guidance](https://www.samsung.com/uk/support/displays/how-to-use-3d-on-the-odyssey-3d-gaming-monitor/).
-2. Download `Any2Odd-0.5.0-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
-3. Quit any running Any2Odd / Odyssey 3D Companion from its tray. Stop Samsung's separate 3D player too.
-4. Open **64-bit PowerShell as administrator using the same Windows account**, change to the extracted folder, and run:
+2. Download `Any2Odd-0.6.0-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
+3. Stop Samsung's separate 3D player. The installer requests a clean shutdown of a running Any2Odd and waits for its worker. If it cannot stop, quit Any2Odd from its tray and retry.
+4. Double-click **Install.cmd** and approve elevation **using the same Windows account** as the existing installation. Alternatively, open **64-bit PowerShell as administrator**, change to the extracted folder, and run:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
@@ -62,10 +64,22 @@ Administrator access is needed to install the worker beside Samsung's conversion
 
 For a read-only package/engine compatibility check, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -CheckOnly`. This does not test the camera or prove optical 3D operation.
 
+## Updating an existing installation
+
+**Upgrade from 0.5.0 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.6.0`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place.
+
+`VERSION` is the single release-version source. The installer checks it against the packaged executable, reads the installed executable version (with registry/manifest fallbacks), and distinguishes a new install, upgrade and same-version repair. It refuses to replace a newer version unless you explicitly use `-AllowDowngrade`. Failed file or registration updates attempt to restore the previous installation; if rollback cannot finish, the error identifies the retained backup folder. Shared Samsung-folder dependencies keep their existing ownership status.
+
+Do not run the older 0.5.0 installer to update a newer installation; that old installer predates version checks. No reboot is required.
+
 ## Controls
 
 | Action | Control |
 | --- | --- |
+| Light / dark theme | Title-bar Light / Dark button, or tray/window context menu |
+| Help | Title-bar Help menu, context menu, or **F1** |
+| Donate | Title-bar Donate button or context menu |
+| Move / resize | Drag the custom title bar / borders; double-click title bar to maximize or restore |
 | Turn 3D on/off | Tray right-click → Turn 3D on/off, or **Ctrl+Alt+F10** |
 | Show controls | Double-click tray icon, desktop icon, or **Ctrl+Alt+F9** |
 | Restore overlay without taking game focus | **Ctrl+Alt+F8** |
@@ -112,9 +126,9 @@ cd Any2Odd
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-The build uses the .NET Framework C# compiler and Windows WinMetadata already on the machine; Visual Studio is not needed. `restore.ps1` downloads four **SharpDX 4.2.0** packages from NuGet, checks pinned SHA-256 hashes, and extracts their .NET 4.5 assemblies. SharpDX is an archived project. The icon is generated from `IconMaker.cs`.
+The build uses the .NET Framework C# compiler and Windows WinMetadata already on the machine; Visual Studio is not needed. `restore.ps1` downloads four **SharpDX 4.2.0** packages from NuGet, checks pinned SHA-256 hashes, and extracts their .NET 4.5 assemblies. SharpDX is an archived project. The icon and metallic wordmark are generated from `IconMaker.cs`. Small icons use a simplified `+1` mark; larger assets use `2n + 1`. No external font files are bundled.
 
-Output: `build\Any2Odd.exe` plus four SharpDX DLLs. Use `package.ps1` to create the distributable ZIP and its checksum. All source needed to build Any2Odd is in this repository. The build produces a functionally equivalent executable; byte-for-byte reproducibility across machines/compiler metadata is not claimed.
+Output: `build\Any2Odd.exe` plus four SharpDX DLLs. Donation QR images are embedded in the executable. The UI lives in `MainWindow.cs`, `DesktopTheme.cs`, `DesktopControls.cs`, `HelpContent.cs` and `DonationWindow.cs`; the capture and overlay surfaces do not inherit the desktop chrome. `python tools/export-guide.py` regenerates the offline HTML guide from the Help catalog when editing documentation. Use `package.ps1` to create the distributable ZIP and its checksum. All source needed to build Any2Odd is in this repository. The build produces a functionally equivalent executable; byte-for-byte reproducibility across machines/compiler metadata is not claimed.
 
 See [TESTING.md](TESTING.md) for the checks and their scope, and [CHANGELOG.md](CHANGELOG.md) for the history.
 
@@ -136,3 +150,5 @@ Depth/overlay settings are written to Samsung's per-user `OverlaySettings.json`;
 Any2Odd's own code and generated icon are licensed under **GPL-3.0-only**; see [LICENSE](LICENSE). Third-party MIT notices are in [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt). Samsung/Leia software remains separately licensed and must be obtained independently; this repository grants no rights to redistribute it.
 
 Inspired by the continuous-conversion workflow of Any2C1. Any2Odd is an independent project, not an Any2C1 fork and not affiliated with or endorsed by Samsung, Leia or Any2C1.
+
+The desktop visual design references [PortalAI](https://github.com/Zhandragon/PortalAI). Its maintainer-supplied donation QR assets are reused unchanged; provenance and hashes are in `assets/donations/PROVENANCE.json`. Any2Odd and PortalAI are independent applications.

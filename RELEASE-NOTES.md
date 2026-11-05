@@ -1,15 +1,16 @@
-# Any2Odd 0.5.0
+# Any2Odd 0.6.0
 
-First public release of the renamed Odyssey 3D Companion: an application that minimizes to the tray and provides Any2C1-style continuous 3D for capturable content on a Samsung Odyssey G90XF.
+A desktop interface refresh with PortalAI-inspired light and dark themes, rounded controls, gold filigree and custom scrollbars. The applications remain independent.
 
-- Desktop, Start menu, tray and application windows now use **Any2Odd** with the high-contrast yellow/cyan glasses icon.
-- Whole-desktop AI conversion, click-through game/desktop controls, depth/pop-out settings, manual side-by-side mode and tray/taskbar toggles.
-- Preserves the capture-feedback, cursor, borderless-capture and taskbar auto-hide fixes from 0.4.3.
-- Existing preferences are retained during an upgrade.
-- GPL-3.0-only source, pinned dependency restore, setup README and offline guide included.
+- A mathematical `2n + 1` emblem, readable `+1` tray icon and engraved wordmark.
+- Custom window borders and controls, plus a themed right-click menu on the window and tray.
+- Internal Help and Donate panels. Help covers capture modes, tuning, overlay/click-through, shortcuts, recovery, troubleshooting and upgrades. Donate uses the same unchanged PayPal/Ethereum/Polygon/Bitcoin QR assets and GitHub Sponsors destination as PortalAI.
+- A remembered light/dark preference stored separately from conversion settings.
+- Version-aware installation: upgrades 0.5.0 in place, supports same-version repair, refuses to overwrite a newer installation unless explicitly requested, and attempts rollback if deployment fails. Preserves settings, logs, Samsung backups and shared dependency ownership.
+- Capture, projection, overlay/click-through, worker lifecycle and global shortcut code retained from 0.5.0.
 
-**Download `Any2Odd-0.5.0-windows-x64.zip` for the prebuilt installer package.** Extract the entire ZIP, quit the running Companion/Any2Odd, then follow README.md. Source code ZIP/TAR downloads require a build. The `.sha256` file gives the installer ZIP checksum. Installation does not reboot Windows.
+**Download `Any2Odd-0.6.0-windows-x64.zip`, extract everything, then run `Install.cmd` on your 3D-display computer. Use the same Windows account as your existing installation. Do not uninstall 0.5.0 first.** The installer requests a clean Any2Odd shutdown and updates its existing location. Stop Samsung's separate player before installation. No reboot is required. See README.md for PowerShell instructions and read-only preflight.
 
-**Experimental compatibility:** G90XF + RTX 4090; Windows 11 24H2+; installed Odyssey 3D Hub 1.5.1 and matching engine hash. Samsung/Leia binaries, AI models and calibration data are not bundled. Protected video and exclusive fullscreen are unsupported, conversion adds latency, and the output is SDR. Automatic side-by-side detection is not implemented.
+Validation: clean build, hosted UI checks, rendered light/dark page review, unchanged-rendering source checks, geometry self-test, real 0.5.0 executable detection, isolated upgrade/repair/rollback tests, shortcut registration and original QR asset hashes. Installation integration tests simulate the Samsung engine/elevation/process checks on this computer; optical output and target-hardware behavior still need validation at the G90XF. See TESTING.md for scope.
 
-Validation: clean build and geometry/source-isolation checks passed; installer preflight and an upgrade from 0.4.3 succeeded. Runtime diagnostics confirmed active desktop conversion, click-through/capture-excluded output, borderless permission and native taskbar-entry cleanup after the rename. The five shipped EXE/DLL files had no detections in a ClamAV scan using the available local definitions. A clean scan is not a security guarantee; the source is available for review. Optical depth and broad hardware compatibility are not automated test results.
+Compatibility remains Windows 11 x64 24H2+, G90XF as primary at 3840 × 2160, the supported Odyssey 3D Hub 1.5.1 engine and its LeiaSR installation. Tested GPU remains RTX 4090. Samsung/Leia binaries, models and calibration data are not bundled. The source downloads require a build; use the prebuilt ZIP for installation.

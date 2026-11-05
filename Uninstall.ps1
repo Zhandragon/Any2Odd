@@ -25,5 +25,7 @@ foreach($file in @($worker,$exe,$manifest,(Join-Path $app 'Any2Odd.ico'),(Join-P
  if(Test-Path -LiteralPath $file){Remove-Item -LiteralPath $file}
 }
 $registration='HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Odyssey3DCompanion'
+$versionFile=Join-Path $app 'version.json'
+if(Test-Path -LiteralPath $versionFile){Remove-Item -LiteralPath $versionFile}
 if(Test-Path -LiteralPath $registration){Remove-Item -LiteralPath $registration}
 Write-Host 'Any2Odd removed. Samsung software, your settings and logs were retained. No reboot is needed.'
