@@ -1,0 +1,11 @@
+build/
+packages/
+dist/
+*.log
+*.backup.*
+*-result.json
+validation-*.json
+scan-*.txt
+.vs/
+*.user
+*.suo

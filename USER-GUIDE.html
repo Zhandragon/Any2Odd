@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Any2Odd — user guide</title>
+<style>body{font:18px/1.6 system-ui;background:#091325;color:#e5edf7;max-width:900px;margin:48px auto;padding:0 24px}h1,h2{color:#ffde23}a{color:#00ebff}code,kbd{background:#233041;padding:3px 6px;border-radius:5px}li{margin:8px 0}table{border-collapse:collapse;width:100%}td,th{text-align:left;padding:12px;border-bottom:1px solid #40506a}</style>
+<h1>Any2Odd</h1>
+<p>Continuous desktop 3D for the Samsung Odyssey G90XF. Version 0.5.0.</p>
+<p>Open the bright yellow glasses icon to start. Whole desktop + AI conversion is the default: wallpaper, icons, windows and compatible borderless games stay in 3D until you turn it off.</p>
+<h2>Everyday controls</h2>
+<table><tr><th>Action</th><th>Control</th></tr><tr><td>3D on/off</td><td>Right-click tray icon, or Ctrl+Alt+F10</td></tr><tr><td>Open controls</td><td>Double-click tray icon, desktop shortcut, or Ctrl+Alt+F9</td></tr><tr><td>Restore overlay without taking game focus</td><td>Ctrl+Alt+F8</td></tr><tr><td>Exit completely</td><td>Tray menu → Quit</td></tr></table>
+<p>Closing/minimizing normally sends Any2Odd to the tray. Change “Minimize and close to the tray” if you prefer normal taskbar behavior. The taskbar icon's right-click jump list includes toggle and controls commands. Escape remains available to your game.</p>
+<h2>Settings</h2>
+<ul><li><b>Whole desktop:</b> recommended for direct interaction. Mouse and keyboard input reach the underlying desktop/game.</li><li><b>Selected window / Follow active window:</b> experimental fitted-window views; scaled mouse coordinates are not remapped.</li><li><b>AI:</b> converts ordinary 2D content automatically.</li><li><b>Side-by-side:</b> manually select for content already containing a stereo pair. Automatic stereo-layout detection is not implemented.</li><li><b>Depth and pop-out:</b> adjust sliders and Apply. The converter restarts briefly.</li><li><b>Keep 3D above apps:</b> maintains the overlay without taking keyboard focus.</li><li><b>Convert automatically:</b> starts 3D when Any2Odd opens. This is not a Windows sign-in startup setting.</li></ul>
+<h2>Requirements</h2>
+<p>Tested with G90XF as primary display at 3840 × 2160 landscape, RTX 4090, Windows 11, Odyssey 3D Hub 1.5.1 and its installed LeiaSR software. Windows 11 24H2+ is required. Keep DisplayPort and USB upstream connected; the monitor's stereo camera must work. This release checks a specific Samsung engine hash and uses an RTX 4090 core-count hint. Other GPUs and engine builds are unvalidated.</p>
+<h2>If something looks wrong</h2>
+<ul><li>Turn 3D off with Ctrl+Alt+F10 to return to the normal desktop.</li><li>Use windowed/borderless games and stop Samsung's separate conversion player.</li><li>Check USB/camera detection, resolution and primary display if conversion does not start.</li><li>Use Ctrl+Alt+F8 if the output goes behind another app.</li><li>Enable taskbar auto-hide in Windows. Other apps' attention requests can still hold it open.</li><li>A yellow capture indicator can appear if Windows denies borderless capture access.</li><li>AI conversion adds latency; protected video, secure desktops and exclusive fullscreen may not capture. HDR input is normalized to SDR, not rendered in native HDR.</li></ul>
+<h2>Files and uninstall</h2>
+<p>Existing settings remain under <code>%LOCALAPPDATA%\Odyssey3DCompanion</code>. Internal paths retain the former Companion name for upgrade compatibility. Open View logs to inspect local diagnostics; redact private paths/window titles before sharing them.</p>
+<p>Uninstall Any2Odd through Windows Installed apps. Samsung's original binaries are not patched. Your settings, logs and the original Samsung overlay-settings backup remain; uninstall does not overwrite newer Samsung preferences with the backup. No computer restart is needed.</p>
+<p><a href="https://github.com/Zhandragon/Any2Odd">Full README, source and issues on GitHub</a> · <a href="https://github.com/Zhandragon/Any2Odd/releases">Releases</a></p>
+<p>Independent GPL-3.0-only project. Samsung/Leia assets are separately installed and licensed. Inspired by Any2C1's workflow; not affiliated with Samsung, Leia or Any2C1.</p></html>
