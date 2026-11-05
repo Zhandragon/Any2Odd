@@ -41,7 +41,7 @@ try{
  & $testInstall -CheckOnly
  Assert ((Get-FileHash -LiteralPath (Join-Path $app 'Any2Odd.exe')).Hash -eq $oldHash -and -not (Test-Path -LiteralPath $registration)) 'CheckOnly leaves old installation and registration untouched'
  & $testInstall
- Assert ((Get-ItemProperty -LiteralPath $registration).DisplayVersion -eq '0.6.0') 'Full upgrade registers version 0.6.0'
+ Assert ((Get-ItemProperty -LiteralPath $registration).DisplayVersion -eq (Get-Content -LiteralPath (Join-Path $repo 'VERSION') -Raw).Trim()) 'Full upgrade registers the packaged version'
  Assert ((Get-Content -LiteralPath (Join-Path $data 'install-result.json') -Raw | ConvertFrom-Json).Action -eq 'Upgrade') 'Install record reports an upgrade from the published version'
  Assert ((Get-FileHash -LiteralPath (Join-Path $data 'settings.json')).Hash -eq $settingsHash) 'Full installer preserves existing user preferences'
  $installedDependencies=Get-Content -LiteralPath (Join-Path $app 'dependencies.json') -Raw | ConvertFrom-Json

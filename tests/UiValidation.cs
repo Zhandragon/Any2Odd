@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -39,6 +39,9 @@ class UiValidation {
   }
   using(var help=(Panel)Activator.CreateInstance(assembly.GetType("OdysseyCompanion.HelpPanel"),Flags,null,new object[]{back},null)){
    help.Size=new Size(820,800);help.PerformLayout();Invoke(help,"SelectTopic","overlay");Check(Descendants(help).OfType<Label>().Single(c=>c.AccessibleName=="Help article").Text.Contains("passes mouse input through"),"Internal Help selects accurate overlay documentation");
+   var catalog=(Array)assembly.GetType("OdysseyCompanion.HelpContent").GetField("Topics",BindingFlags.Static|BindingFlags.Public).GetValue(null);
+   foreach(var topic in catalog){string id=(string)topic.GetType().GetProperty("Id").GetValue(topic,null);Invoke(help,"SelectTopic",id);Check(Descendants(help).OfType<Label>().Single(c=>c.AccessibleName=="Help article").Text.Length>100,"Written Help loads: "+id);}
+   Check(!Descendants(help).OfType<PictureBox>().Any(),"In-app Help remains text-only");
   }
   foreach(var size in new[]{new Size(850,940),new Size(700,580),new Size(1200,900)}){form.Size=size;form.PerformLayout();Invoke(Field(form,"controlsPage"),"Arrange");Check(Descendants(form).OfType<ComboBox>().All(c=>c.Width>180),"Controls fit desktop width "+size.Width);}
   Check(!Descendants(form).OfType<ScrollableControl>().Any(c=>c.AutoScroll),"Desktop pages do not use native white scrollbars");
@@ -62,7 +65,7 @@ class UiValidation {
    var mode=(ComboBox)Field(form,"mode");var source=(ComboBox)Field(form,"windows");mode.SelectedIndex=1;Check(source.Enabled,"Selected-window source is enabled");mode.SelectedIndex=0;Check(!source.Enabled,"Desktop source picker is disabled without changing capture mode options");
    var tray=(NotifyIcon)Field(form,"tray");var menu=(ContextMenuStrip)Field(form,"appMenu");Check(tray.ContextMenuStrip==menu&&form.ContextMenuStrip==menu,"Tray and desktop share the same action menu");
    Check(menu.Items.Cast<ToolStripItem>().Count(i=>i.Text=="Help"||i.Text=="Donate")==2,"Help and Donate reachable from context menu");
-   var helpMenu=(ContextMenuStrip)Field(form,"helpMenu");Check(helpMenu.Items.Count==10,"Help menu contains all eight topics and the offline guide");
+   var helpMenu=(ContextMenuStrip)Field(form,"helpMenu");Check(helpMenu.Items.Count==15,"Help menu contains all thirteen topics and the offline guide");
    Invoke(form,"HideToTray");Application.DoEvents();Check(!form.Visible&&tray.Visible,"Explicit tray hide keeps a restore icon");Invoke(form,"ShowControls");Application.DoEvents();Check(form.Visible&&form.WindowState==FormWindowState.Normal,"Controls restore from tray");
    form.Close();Application.DoEvents();Check(!form.IsDisposed&&!form.Visible,"Close honors enabled tray preference");Invoke(form,"ShowControls");
    ((CheckBox)Field(form,"minimize")).Checked=false;form.WindowState=FormWindowState.Minimized;Application.DoEvents();Check(form.Visible,"Minimize remains on taskbar with tray preference disabled");Invoke(form,"ShowControls");

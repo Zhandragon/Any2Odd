@@ -1,10 +1,18 @@
-<img src="assets/Any2Odd-wordmark.png" alt="Any2Odd: 2n maps to 2n plus 1" width="520">
+<p align="center"><img src="assets/Any2Odd-wordmark.png" alt="Any2Odd: 2n maps to 2n plus 1" width="520" /></p>
 
-# Any2Odd
+<h1 align="center">Any2Odd</h1>
+
+<p align="center"><strong>Continuous desktop 3D for your Odyssey. Controls that stay out of the way.</strong></p>
+
+<p align="center"><a href="#install">Download & install</a> · <a href="#a-look-inside">Interface gallery</a> · <a href="Documentation/README.md">Illustrated Help</a> · <a href="#requirements">Dependencies</a> · <a href="Documentation/PLATFORMS.md">macOS / Linux</a></p>
+
+**0.7.0 (2026-11-05):** Expanded written Help and illustrated GitHub documentation, explicit origins and dependency documentation, PortalAI's sponsor presentation, and experimental macOS/Linux launch bundles. **macOS and Linux versions are not tested on those operating systems and have limited stereo-format conversion; Samsung AI and calibrated Odyssey output remain Windows-only.**
+
+<p align="center"><a href="https://github.com/sponsors/Zhandragon"><img src="Documentation/assets/sponsor-button.svg" width="252" height="48" alt="Sponsor on GitHub" /></a><br/><sub>Support continued Any2Odd development · <a href="Documentation/DONATIONS.md">Donation options</a></sub></p>
 
 **Continuous desktop 3D for the Samsung Odyssey G90XF.**
 
-Any2Odd is a Windows application that minimizes to the system tray and turns capturable on-screen content into glasses-free 3D: wallpaper, desktop icons, app windows, web video, and compatible borderless games. It aims for the always-on, turn-it-off-from-the-tray experience of Any2C1, using the Odyssey's own calibrated conversion engine.
+Any2Odd is a Windows application that minimizes to the system tray and turns capturable on-screen content into glasses-free 3D: wallpaper, desktop icons, app windows, web video, and compatible borderless games. Its continuous-conversion/tray workflow is inspired by **Any2C1, the companion/conversion app for CubeVi's C1 spatial display (Companion 01)**. Any2Odd implements that workflow separately for Samsung's Odyssey using the installed Samsung conversion engine. See [CubeVi's C1 guide](https://cubevi.com/pages/cube-c1-user-guide) and [software downloads](https://cubevi.com/pages/download-page) for the source hardware ecosystem; CubeVi's broader suite is called CubeStage. The project maintainer identified Any2C1 as the specific inspiration. **Any2C1, CubeStage, the CubeVi C1 and PortalAI are not dependencies.**
 
 It works around Odyssey 3D Hub's normal fullscreen/video-window workflow by feeding a continuous desktop capture into its renderer. There is no per-video approval step. Escape remains available to games, and changing focus or opening menus does not intentionally stop conversion. The 3D overlay passes mouse input through to the real desktop or game underneath.
 
@@ -12,7 +20,31 @@ It works around Odyssey 3D Hub's normal fullscreen/video-window workflow by feed
 
 [Download a release](https://github.com/Zhandragon/Any2Odd/releases) · [Report an issue](https://github.com/Zhandragon/Any2Odd/issues) · [GPL-3.0 license](LICENSE)
 
-## Features
+## A look inside
+
+**Windows controls, in light and dark.** Choose the source and input format, tune depth/pop-out, then use **Apply settings / restart conversion**. The checked automatic-start preference means "when this app opens"; the installer does not add Windows sign-in startup.
+
+| Light | Dark |
+| --- | --- |
+| [![Windows controls in light mode](Documentation/assets/controls-light.png)](Documentation/assets/controls-light.png) | [![Windows controls in dark mode](Documentation/assets/controls-dark.png)](Documentation/assets/controls-dark.png) |
+
+**Written Help and internal Donate.** F1 or the Help menu opens explanations of settings, defaults, dependencies, display checks and troubleshooting. Donate uses the original PortalAI QR images and the same maintainer sponsorship destination. Both pages live in the controls window.
+
+| Settings Help | Donate |
+| --- | --- |
+| [![Text-only Help with setting explanations](Documentation/assets/help-light.png)](Documentation/assets/help-light.png) | [![Internal donation page with four original QR codes](Documentation/assets/donate-light.png)](Documentation/assets/donate-light.png) |
+
+<sub>Real Windows widgets rendered in an isolated preview. Conversion was not started; these images do not demonstrate optical 3D or macOS/Linux operation. Click to see full size. [Artwork notes](Documentation/assets/README.md).</sub>
+
+## Built-in Help and documentation
+
+Open **Help** or press **F1** for written explanations inside the app. **Help → Open offline guide** opens the matching text-only HTML. The [GitHub Help page](Documentation/README.md) and this README add clickable screenshots in light and dark modes. Screenshots are not embedded in the app.
+
+- [Capture/source selection](Documentation/README.md#capture), [input/depth/pop-out](Documentation/README.md#input), and [automatic start/recovery](Documentation/README.md#automation).
+- [Dependency ownership](Documentation/README.md#dependencies), [what display checks actually detect](Documentation/README.md#detection), and [Any2C1 / CubeVi origins](Documentation/README.md#origins).
+- [Tray, menus and shortcuts](Documentation/README.md#tray), [updates](Documentation/README.md#updates), and [experimental macOS/Linux usage](Documentation/README.md#portable).
+
+## Windows features
 
 - Whole-desktop AI conversion, enabled by default when the app opens.
 - PortalAI-inspired light and dark themes, rounded controls, gold filigree borders and custom desktop window controls. The theme choice is remembered separately from conversion settings.
@@ -30,6 +62,8 @@ Automatic side-by-side detection is **not implemented**. Select side-by-side man
 
 ## Requirements
 
+These requirements apply to the full Windows converter. The experimental portable editions have [separate prerequisites and capabilities](portable/START-HERE.md).
+
 | Component | Required / tested |
 | --- | --- |
 | OS | Windows 11 x64, 24H2 (build 26100) or newer; tested on build 26300 |
@@ -37,7 +71,13 @@ Automatic side-by-side detection is **not implemented**. Select side-by-side man
 | Connection | DisplayPort and the monitor's USB upstream connection; working `3D Stereo WebCam` |
 | GPU | Tested on RTX 4090; this initial release passes a fixed 16,384-core hint to the native engine. Other GPUs are unvalidated |
 | Samsung software | Odyssey 3D Hub 1.5.1 and its installed LeiaSR dependencies, in their default `C:\Program Files` locations |
-| Runtime/build | .NET Framework 4.8, 64-bit Windows PowerShell 5.1 or newer |
+| Runtime/install | .NET Framework 4.8 or compatible Windows-supplied 4.8.1; 64-bit Windows PowerShell 5.1 |
+
+**Who supplies what:** Any2Odd supplies the desktop controls, capture, click-through/window management and four bundled **SharpDX 4.2.0** DLLs. Windows supplies WinForms/.NET, Win32/DWM, Windows Graphics Capture and Direct3D/DXGI. The build-26100 minimum corresponds to the capture code's [MinUpdateInterval API](https://learn.microsoft.com/en-us/uwp/api/windows.graphics.capture.graphicscapturesession.minupdateinterval). Samsung supplies the conversion engine and AI assets; Samsung/Leia components provide tracking, calibration and optical output. No Samsung/Leia binaries or models are bundled.
+
+The Hub's main window is not explicitly required to stay open by Any2Odd's code, but its installed engine and working background runtime are required. The Hub may be needed to initialize them. Stop its separate **Odyssey3DPlayer** before conversion. Both AI and SBS input use that installed engine. Uninstalling Hub removes required components. No Any2C1/PortalAI install, system Python, Node, Visual Studio or separate CUDA Toolkit is needed for the prebuilt Windows package.
+
+**Detection limits:** startup checks a 3840 × 2160 primary screen, a working `3D Stereo WebCam` device, the expected engine/worker and absence of Samsung's separate player. It does not identify the monitor's EDID/model, pick a compatible secondary display, or automatically activate on hot-plug. Failed prerequisites leave conversion off until you correct the issue and retry.
 
 The app and installer check the exact `ConversionWrapper.dll` SHA-256:
 
@@ -50,7 +90,7 @@ A different engine stops installation/conversion with a compatibility message. D
 ## Install
 
 1. Install and configure Samsung Odyssey 3D Hub and verify that its ordinary 3D playback works. See [Samsung's setup guidance](https://www.samsung.com/uk/support/displays/how-to-use-3d-on-the-odyssey-3d-gaming-monitor/).
-2. Download `Any2Odd-0.6.0-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
+2. Download `Any2Odd-0.7.0-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
 3. Stop Samsung's separate 3D player. The installer requests a clean shutdown of a running Any2Odd and waits for its worker. If it cannot stop, quit Any2Odd from its tray and retry.
 4. Double-click **Install.cmd** and approve elevation **using the same Windows account** as the existing installation. Alternatively, open **64-bit PowerShell as administrator**, change to the extracted folder, and run:
 
@@ -64,9 +104,21 @@ Administrator access is needed to install the worker beside Samsung's conversion
 
 For a read-only package/engine compatibility check, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -CheckOnly`. This does not test the camera or prove optical 3D operation.
 
+### Experimental macOS and Linux downloads
+
+**Not tested on macOS or Linux.** These are small source launch bundles, using Python 3.10–3.13 and PySide6/Qt. They provide themed controls/tray, written Help/Donate, SBS image viewing, red/cyan anaglyph conversion and a constrained experimental live-screen path. They do not include Samsung AI depth or calibrated Odyssey output. An ordinary 2D image stays flat.
+
+| Platform | Release asset | After extraction |
+| --- | --- | --- |
+| Windows x64, full Samsung backend | [Windows installer ZIP](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.0/Any2Odd-0.7.0-windows-x64.zip) | `Install.cmd` |
+| macOS 13+, Intel / Apple silicon — experimental | [macOS launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.0/Any2Odd-0.7.0-macos-experimental.zip) | `Launch-macOS.command` |
+| Linux x86-64, glibc 2.34+ — experimental | [Linux launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.0/Any2Odd-0.7.0-linux-experimental.tar.gz) | `sh launch-linux.sh` |
+
+The portable launchers create a private virtual environment and download pinned Qt wheels on first launch. Read [setup and limits](portable/START-HERE.md) and the [platform capability matrix](Documentation/PLATFORMS.md). These bundles have no native macOS/Linux acceptance testing. The offline/shared-code tests were run on Windows only.
+
 ## Updating an existing installation
 
-**Upgrade from 0.5.0 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.6.0`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place.
+**Upgrade from 0.5.0 or 0.6.0 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.7.0`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place.
 
 `VERSION` is the single release-version source. The installer checks it against the packaged executable, reads the installed executable version (with registry/manifest fallbacks), and distinguishes a new install, upgrade and same-version repair. It refuses to replace a newer version unless you explicitly use `-AllowDowngrade`. Failed file or registration updates attempt to restore the previous installation; if rollback cannot finish, the error identifies the retained backup folder. Shared Samsung-folder dependencies keep their existing ownership status.
 
@@ -128,7 +180,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 
 The build uses the .NET Framework C# compiler and Windows WinMetadata already on the machine; Visual Studio is not needed. `restore.ps1` downloads four **SharpDX 4.2.0** packages from NuGet, checks pinned SHA-256 hashes, and extracts their .NET 4.5 assemblies. SharpDX is an archived project. The icon and metallic wordmark are generated from `IconMaker.cs`. Small icons use a simplified `+1` mark; larger assets use `2n + 1`. No external font files are bundled.
 
-Output: `build\Any2Odd.exe` plus four SharpDX DLLs. Donation QR images are embedded in the executable. The UI lives in `MainWindow.cs`, `DesktopTheme.cs`, `DesktopControls.cs`, `HelpContent.cs` and `DonationWindow.cs`; the capture and overlay surfaces do not inherit the desktop chrome. `python tools/export-guide.py` regenerates the offline HTML guide from the Help catalog when editing documentation. Use `package.ps1` to create the distributable ZIP and its checksum. All source needed to build Any2Odd is in this repository. The build produces a functionally equivalent executable; byte-for-byte reproducibility across machines/compiler metadata is not claimed.
+Output: `build\Any2Odd.exe` plus four SharpDX DLLs. Donation QR images are embedded in the executable. The UI lives in `MainWindow.cs`, `DesktopTheme.cs`, `DesktopControls.cs`, `HelpContent.cs` and `DonationWindow.cs`; the capture and overlay surfaces do not inherit the desktop chrome. `python tools/export-guide.py` regenerates the self-contained offline HTML and GitHub illustrated guide from `Documentation/help.json`. The written catalog is embedded in Windows Help and reused by the portable frontend; screenshots are only for the GitHub pages. Use `package.ps1` to create the distributable ZIP and its checksum. All source needed to build Any2Odd is in this repository. The build produces a functionally equivalent executable; byte-for-byte reproducibility across machines/compiler metadata is not claimed.
 
 See [TESTING.md](TESTING.md) for the checks and their scope, and [CHANGELOG.md](CHANGELOG.md) for the history.
 
@@ -149,6 +201,6 @@ Depth/overlay settings are written to Samsung's per-user `OverlaySettings.json`;
 
 Any2Odd's own code and generated icon are licensed under **GPL-3.0-only**; see [LICENSE](LICENSE). Third-party MIT notices are in [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt). Samsung/Leia software remains separately licensed and must be obtained independently; this repository grants no rights to redistribute it.
 
-Inspired by the continuous-conversion workflow of Any2C1. Any2Odd is an independent project, not an Any2C1 fork and not affiliated with or endorsed by Samsung, Leia or Any2C1.
+Inspired by Any2C1 for the **CubeVi C1 / Companion 01** spatial display, as identified by the project maintainer. CubeVi documents its hardware and CubeStage suite on its [official site](https://cubevi.com/pages/cube-c1-user-guide). Any2Odd is an independent project, not an Any2C1 fork and not affiliated with or endorsed by Samsung, Leia or Any2C1.
 
 The desktop visual design references [PortalAI](https://github.com/Zhandragon/PortalAI). Its maintainer-supplied donation QR assets are reused unchanged; provenance and hashes are in `assets/donations/PROVENANCE.json`. Any2Odd and PortalAI are independent applications.

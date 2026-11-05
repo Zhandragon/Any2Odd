@@ -9,3 +9,5 @@ scan-*.txt
 .vs/
 *.user
 *.suo
+__pycache__/
+.venv/

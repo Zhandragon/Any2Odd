@@ -1,5 +1,25 @@
 # Testing
 
+## 0.7.0 validation and platform limits
+
+**macOS and Linux distributions are experimental and not tested on those operating systems.** Tests below run on Windows without Odyssey Hub, a Samsung 3D display or Any2C1.
+
+- Native Windows build, both UI validation modes, geometry self-test and protected rendering-code comparison against 0.5.0. All thirteen written Help topics are exercised without a renderer; a check confirms in-app Help has no screenshots.
+- `tools/DocumentationScreenshots.cs` renders real controls/Help/Donate in an isolated child-control host, using unsaved default preferences and a neutral source-window placeholder. Artwork is inspected for the GitHub pages. `tools/export-guide.py` generates offline HTML and GitHub Help from `Documentation/help.json`; Only the GitHub pages use screenshots; the offline HTML and app Help are text-only.
+- Existing installer transaction/rollback and isolated full-install tests exercise upgrade from the published 0.5.0 package and same-version repair. No actual Samsung engine is loaded. Windows projection and click-through code remain unchanged.
+- `tests/test_portable.py` verifies exact anaglyph eye/channel mapping, SBS eye swap, half-width geometry, flat passthrough, invalid input, no autostart, real Help/QR resources, same-screen/Wayland guards, stopping on source/display changes, image-output lifecycle and Qt capture API setup without capture. UI renders use Qt's **offscreen platform on Windows**, with the host Segoe font loaded only for visual verification.
+- Python syntax and POSIX launcher syntax are checked. Portable bundles are inspected for required files, executable launcher permissions, exact shared assets, no virtual environment/user data, and SHA-256 integrity. Matching Qt wheels are downloaded by the target launcher; no cross-platform binary build is claimed.
+
+Remaining acceptance: real macOS/Linux installation, Screen Recording/portal permissions, native capture, tray and focus/click-through behavior, screen scaling/hot-plug, and any future optical G90XF backend. Windows native multi-DPI and optical acceptance remain target-machine checks as described below.
+
+```powershell
+python -m venv build/portable-venv
+build/portable-venv/Scripts/python.exe -m pip install -r portable/requirements.txt
+build/portable-venv/Scripts/python.exe tests/test_portable.py
+```
+
+Use the equivalent `.venv/bin/python` on a native POSIX host when performing target-platform acceptance; an offscreen test alone does not validate native desktop behavior.
+
 The initial release is based on local testing with one G90XF/RTX 4090 setup, not a broad compatibility certification.
 
 ## Automated and diagnostic checks

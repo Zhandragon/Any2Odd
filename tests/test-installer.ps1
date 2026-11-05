@@ -31,7 +31,7 @@ Assert ($failed -and $rollback.Called) 'Failure invokes registration rollback'
 Assert ((Get-FileHash -LiteralPath (Join-Path $app 'Any2Odd.exe')).Hash -eq $oldHash) 'Failed upgrade restores old executable byte-for-byte'
 Assert (-not (Test-Path -LiteralPath (Join-Path $engine 'OdysseyCompanionWorker.exe'))) 'Failed upgrade removes newly introduced worker'
 Invoke-Any2OddFileTransaction $operations
-Assert ((Get-Any2OddInstalledVersion $app '' $data).Version -eq [version]'0.6.0.0') 'Successful upgrade installs new executable version'
+Assert ((Get-Any2OddInstalledVersion $app '' $data).Version -eq [Reflection.AssemblyName]::GetAssemblyName($current).Version) 'Successful upgrade installs new executable version'
 Assert ((Get-FileHash -LiteralPath (Join-Path $engine 'OdysseyCompanionWorker.exe')).Hash -eq (Get-FileHash -LiteralPath $current).Hash) 'App and worker match after upgrade'
 Assert ((Get-FileHash -LiteralPath (Join-Path $data 'settings.json')).Hash -eq $settingsHash) 'Preferences preserved byte-for-byte'
 Assert ((Get-FileHash -LiteralPath (Join-Path $data 'Samsung-OverlaySettings-before.json')).Hash -eq $backupHash) 'Samsung settings backup preserved'

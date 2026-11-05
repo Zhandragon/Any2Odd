@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0 — Documentation and experimental portable editions
+
+- Expand written Help to thirteen shared topics covering defaults, apply/save behavior, display checks, dependencies, troubleshooting and upgrades. Keep the original text-only app layout and offline guide; add real light/dark screenshots to the GitHub README and documentation.
+- Credit Any2C1 as the CubeVi C1 companion app that inspired the workflow, and distinguish it from the Samsung/Leia/Windows runtime dependencies.
+- Present the repository with centered branding, navigation, screenshot galleries and PortalAI's original GitHub Sponsors button/FUNDING configuration.
+- Add experimental, source-based macOS and Linux launch bundles with a shared Qt frontend, themes, tray fallback, Help and original donation assets. **Not tested on macOS or Linux.**
+- Portable features: image-file SBS viewing, red/cyan anaglyph conversion, eye swap, flat preview and PNG export; constrained live screen capture requires a separate output display and is disabled on Wayland.
+- Portable builds do not implement Samsung AI depth, eye tracking or calibrated G90XF output. Native dependencies are fetched on first launch; Windows remains the full Samsung converter.
+- Preserve Windows capture, projection, click-through, renderer lifecycle, global shortcuts and version-aware upgrade behavior.
+
 ## 0.6.0 — Desktop controls and upgrades
 
 - Add PortalAI-inspired light/dark palettes, rounded controls, gold filigree, custom scrollbars and movable/resizable desktop borders. Remember the theme independently of conversion settings.

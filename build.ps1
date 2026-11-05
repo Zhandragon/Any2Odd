@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference='Stop'
+$ErrorActionPreference='Stop'
 $out=Join-Path $PSScriptRoot 'build'
 if(-not [Environment]::Is64BitProcess){throw 'Build from 64-bit PowerShell.'}
 if([Environment]::OSVersion.Version.Build -lt 26100){throw 'Windows 11 24H2 (build 26100) or newer is required.'}
@@ -17,6 +17,7 @@ $sources=@('Companion.cs','MainWindow.cs','DesktopTheme.cs','DesktopControls.cs'
 $sources+=$versionSource
 $resources=@('paypal.png','ethereum.png','polygon.png','bitcoin.png') | ForEach-Object {'/resource:'+(Join-Path $PSScriptRoot ('assets\donations\'+$_))+',Any2Odd.Donations.'+$_}
 $resources+='/resource:'+(Join-Path $PSScriptRoot 'assets\Any2Odd-wordmark.png')+',Any2Odd.Wordmark.png'
+$resources+='/resource:'+(Join-Path $PSScriptRoot 'Documentation\help.json')+',Any2Odd.Help.json'
 $wpf=@('PresentationFramework','PresentationCore','WindowsBase') | ForEach-Object {'/r:'+(Join-Path "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\WPF" ($_+'.dll'))}
 $winrt=@('Windows.Graphics','Windows.Foundation','Windows.Security') | ForEach-Object {'/r:'+(Join-Path "$env:WINDIR\System32\WinMetadata" ($_+'.winmd'))}
 $winrt+= '/r:'+(Join-Path "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319" 'System.Runtime.WindowsRuntime.dll')
