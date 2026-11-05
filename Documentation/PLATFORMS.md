@@ -1,6 +1,6 @@
 # Platform support and experimental ports
 
-**Release 0.7.0: macOS and Linux versions are experimental and have not been tested on their target operating systems.** The shared Python/Qt app implements limited stereo viewing/conversion. The native Windows application retains the existing Samsung conversion backend.
+**Release 0.7.1: macOS and Linux versions are experimental and have not been tested on their target operating systems.** The shared Python/Qt app implements limited stereo viewing/conversion. The native Windows application retains the existing Samsung conversion backend.
 
 | Capability | Windows x64 | Experimental macOS / Linux |
 | --- | --- | --- |
@@ -19,9 +19,9 @@
 
 ## What is actually distributed
 
-- `Any2Odd-0.7.0-windows-x64.zip`: compiled native app and version-aware Windows installer.
-- `Any2Odd-0.7.0-macos-experimental.zip`: source launch bundle with `Launch-macOS.command` for macOS 13+ Intel/Apple silicon and Python 3.10–3.13.
-- `Any2Odd-0.7.0-linux-experimental.tar.gz`: source launch bundle with `launch-linux.sh`, targeting x86-64/glibc 2.34+ and Python 3.10–3.13 in a graphical desktop session.
+- `Any2Odd-0.7.1-windows-x64.zip`: compiled native app and version-aware Windows installer.
+- `Any2Odd-0.7.1-macos-experimental.zip`: source launch bundle with `Launch-macOS.command` for macOS 13+ Intel/Apple silicon and Python 3.10–3.13.
+- `Any2Odd-0.7.1-linux-experimental.tar.gz`: source launch bundle with `launch-linux.sh`, targeting x86-64/glibc 2.34+ and Python 3.10–3.13 in a graphical desktop session.
 
 The portable launchers install pinned PySide6/Qt wheels into `.venv` in their extracted folders. They do not bundle a Python interpreter, install Odyssey Hub, register a system service, or promise optical Odyssey output. Binary-wheel platform requirements come from [PySide6 6.10.1's published files](https://pypi.org/project/PySide6/6.10.1/#files).
 

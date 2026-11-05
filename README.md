@@ -6,7 +6,7 @@
 
 <p align="center"><a href="#install">Download & install</a> · <a href="#a-look-inside">Interface gallery</a> · <a href="Documentation/README.md">Illustrated Help</a> · <a href="#requirements">Dependencies</a> · <a href="Documentation/PLATFORMS.md">macOS / Linux</a></p>
 
-**0.7.0 (2026-11-05):** Expanded written Help and illustrated GitHub documentation, explicit origins and dependency documentation, PortalAI's sponsor presentation, and experimental macOS/Linux launch bundles. **macOS and Linux versions are not tested on those operating systems and have limited stereo-format conversion; Samsung AI and calibrated Odyssey output remain Windows-only.**
+**0.7.1 (2026-11-05):** Installer errors now stay visible. Use **Install-GUI.cmd** to install just the Windows desktop controls without Odyssey Hub, or **Install.cmd** for the full converter. Written Help, illustrated GitHub documentation and sponsorship remain included. **macOS and Linux versions are experimental, not tested on those operating systems, and have limited stereo-format conversion; Samsung AI and calibrated Odyssey output remain Windows-only.**
 
 <p align="center"><a href="https://github.com/sponsors/Zhandragon"><img src="Documentation/assets/sponsor-button.svg" width="252" height="48" alt="Sponsor on GitHub" /></a><br/><sub>Support continued Any2Odd development · <a href="Documentation/DONATIONS.md">Donation options</a></sub></p>
 
@@ -62,7 +62,7 @@ Automatic side-by-side detection is **not implemented**. Select side-by-side man
 
 ## Requirements
 
-These requirements apply to the full Windows converter. The experimental portable editions have [separate prerequisites and capabilities](portable/START-HERE.md).
+These requirements apply to the full Windows converter. **Controls-only installation** needs the Windows/runtime rows below, but no Hub, Samsung display or administrator access; it cannot perform 3D conversion. The experimental portable editions have [separate prerequisites and capabilities](portable/START-HERE.md).
 
 | Component | Required / tested |
 | --- | --- |
@@ -89,8 +89,18 @@ A different engine stops installation/conversion with a compatibility message. D
 
 ## Install
 
+### Windows controls without a 3D setup
+
+On a PC without Odyssey Hub or the Samsung display, download and fully extract the Windows ZIP, then double-click **Install-GUI.cmd**. It installs the same themed controls, tray, written Help and Donate under your Windows account, creates desktop/Start menu shortcuts, and appears as **Any2Odd (controls only)** in Installed apps. No administrator access is needed. It does not install a conversion worker or change Samsung's folders.
+
+**3D conversion is unavailable in this mode.** The automatic-conversion preference is unchanged: on first launch, the normal prerequisite check reports the missing engine or worker and leaves conversion off. You can uncheck **Convert automatically when this app opens** while using the controls.
+
+Later, install the supported Samsung setup and run **Install.cmd** from the same or a newer release to add full conversion, preserving your settings. On a PC with an existing full installation, use **Install.cmd** to keep the app and worker versions together; controls-only setup refuses to replace an installed worker.
+
+### Full Windows 3D converter
+
 1. Install and configure Samsung Odyssey 3D Hub and verify that its ordinary 3D playback works. See [Samsung's setup guidance](https://www.samsung.com/uk/support/displays/how-to-use-3d-on-the-odyssey-3d-gaming-monitor/).
-2. Download `Any2Odd-0.7.0-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
+2. Download `Any2Odd-0.7.1-windows-x64.zip` from [Releases](https://github.com/Zhandragon/Any2Odd/releases) and extract it to a normal folder. The GitHub-generated **Source code** downloads need to be built first.
 3. Stop Samsung's separate 3D player. The installer requests a clean shutdown of a running Any2Odd and waits for its worker. If it cannot stop, quit Any2Odd from its tray and retry.
 4. Double-click **Install.cmd** and approve elevation **using the same Windows account** as the existing installation. Alternatively, open **64-bit PowerShell as administrator**, change to the extracted folder, and run:
 
@@ -102,7 +112,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 
 Administrator access is needed to install the worker beside Samsung's conversion engine. **No Windows restart is needed.** The installer adds its own worker and SharpDX dependencies; it does not patch Samsung's executables or DLLs. It preserves existing Any2Odd/Companion preferences.
 
-For a read-only package/engine compatibility check, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -CheckOnly`. This does not test the camera or prove optical 3D operation.
+Both launchers keep the specific error visible in the original console. Full setup checks prerequisites before requesting elevation and refuses elevation under a different Windows account.
+
+For a read-only package/engine compatibility check, run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -CheckOnly`. Add `-ControlsOnly` to check GUI installation without requiring Hub. These checks do not test the camera or prove optical 3D operation.
 
 ### Experimental macOS and Linux downloads
 
@@ -110,15 +122,15 @@ For a read-only package/engine compatibility check, run `powershell.exe -NoProfi
 
 | Platform | Release asset | After extraction |
 | --- | --- | --- |
-| Windows x64, full Samsung backend | [Windows installer ZIP](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.0/Any2Odd-0.7.0-windows-x64.zip) | `Install.cmd` |
-| macOS 13+, Intel / Apple silicon — experimental | [macOS launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.0/Any2Odd-0.7.0-macos-experimental.zip) | `Launch-macOS.command` |
-| Linux x86-64, glibc 2.34+ — experimental | [Linux launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.0/Any2Odd-0.7.0-linux-experimental.tar.gz) | `sh launch-linux.sh` |
+| Windows x64, full converter or controls only | [Windows installer ZIP](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.1/Any2Odd-0.7.1-windows-x64.zip) | `Install.cmd` or `Install-GUI.cmd` |
+| macOS 13+, Intel / Apple silicon — experimental | [macOS launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.1/Any2Odd-0.7.1-macos-experimental.zip) | `Launch-macOS.command` |
+| Linux x86-64, glibc 2.34+ — experimental | [Linux launch bundle](https://github.com/Zhandragon/Any2Odd/releases/download/v0.7.1/Any2Odd-0.7.1-linux-experimental.tar.gz) | `sh launch-linux.sh` |
 
 The portable launchers create a private virtual environment and download pinned Qt wheels on first launch. Read [setup and limits](portable/START-HERE.md) and the [platform capability matrix](Documentation/PLATFORMS.md). These bundles have no native macOS/Linux acceptance testing. The offline/shared-code tests were run on Windows only.
 
 ## Updating an existing installation
 
-**Upgrade from 0.5.0 or 0.6.0 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.7.0`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place.
+**Upgrade from 0.5.0, 0.6.0 or 0.7.0 without uninstalling.** Extract the new ZIP into a new folder and run `Install.cmd` on the computer with your 3D display. The installer detects the old executable, reports `Upgrade Any2Odd 0.5.0.0 -> 0.7.1`, and updates the same app, worker, shortcuts and Windows Installed apps entry. Your preferences, logs and original Samsung overlay-settings backup remain in place. Use `Install-GUI.cmd` to update a controls-only installation without adding conversion.
 
 `VERSION` is the single release-version source. The installer checks it against the packaged executable, reads the installed executable version (with registry/manifest fallbacks), and distinguishes a new install, upgrade and same-version repair. It refuses to replace a newer version unless you explicitly use `-AllowDowngrade`. Failed file or registration updates attempt to restore the previous installation; if rollback cannot finish, the error identifies the retained backup folder. Shared Samsung-folder dependencies keep their existing ownership status.
 
@@ -155,6 +167,7 @@ The worker lives next to Samsung's engine because that engine resolves assets re
 
 ## Limits and troubleshooting
 
+- **Setup reports missing Odyssey Hub:** use `Install-GUI.cmd` for desktop controls on a PC without a 3D setup. For full conversion, install the supported Samsung Hub and use `Install.cmd`. Version 0.7.1 keeps the underlying setup error visible; download the new ZIP if an old launcher only says installation did not complete.
 - **Capture adds latency.** GPU capture reduced overhead in local testing, but this is not zero-latency native stereo rendering. Video/audio timing and responsiveness depend on GPU load, source and display. End-to-end latency has not been measured.
 - **Not every surface can be captured.** Protected/DRM video, secure desktops, exclusive fullscreen, some overlays and apps that stop rendering when occluded may not work. This app does not bypass DRM, anti-cheat, camera or hardware requirements.
 - **HDR input is normalized to SDR.** The conversion path is not native HDR; bright highlights can clip. Windows HDR settings are not changed.

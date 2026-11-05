@@ -1,5 +1,5 @@
 ﻿[CmdletBinding()]
-param([switch]$CheckOnly,[switch]$AllowDowngrade)
+param([switch]$CheckOnly,[switch]$AllowDowngrade,[switch]$ControlsOnly)
 $ErrorActionPreference='Stop'
 . (Join-Path $PSScriptRoot 'InstallSupport.ps1')
 # Keep the 0.5.0 installation identity, data directory, worker name and IPC names.
@@ -22,22 +22,30 @@ $installedVersion=if($installed){$installed.Version}else{$null}
 $action=Get-Any2OddInstallAction -PackageVersion $version -InstalledVersion $installedVersion -AllowDowngrade:$AllowDowngrade
 Write-Host ("$action Any2Odd " + $(if($installed){$installed.Version.ToString()+' -> '}else{''}) + $versionText)
 $engineDll=Join-Path $engine 'ConversionWrapper.dll'
-if(-not (Test-Path -LiteralPath $engineDll)){throw 'Install Samsung Odyssey 3D Hub first.'}
-if((Get-FileHash -LiteralPath $engineDll).Hash -ne '0116B33697CA0192FBE26DA96CB9E2592599C0CACFBB1129AE03E445CB3A840B'){throw 'Samsung engine changed. This release needs a compatibility update.'}
+if($ControlsOnly){
+ # Keep full-install app and renderer versions synchronized.
+ if(Test-Path -LiteralPath (Join-Path $engine 'OdysseyCompanionWorker.exe')){throw 'A conversion worker is already installed. Use Install.cmd to update the full installation together.'}
+ Write-Host 'Controls-only mode: GUI, tray, Help and Donate; 3D conversion is unavailable. Samsung files will not be installed or changed.'
+}else{
+ if(-not (Test-Path -LiteralPath $engineDll)){throw 'Samsung Odyssey 3D Hub is not installed. For full 3D conversion, install the supported Hub first. To install just the desktop controls on this PC, run Install-GUI.cmd instead.'}
+ if((Get-FileHash -LiteralPath $engineDll).Hash -ne '0116B33697CA0192FBE26DA96CB9E2592599C0CACFBB1129AE03E445CB3A840B'){throw 'Samsung engine changed. This release needs a compatibility update.'}
+}
 $prior=@();$manifest=Join-Path $app 'dependencies.json'
 if(Test-Path -LiteralPath $manifest){$prior=Get-Content -LiteralPath $manifest -Raw | ConvertFrom-Json}
 $dependencies=foreach($name in $dependencyNames){
  $file=Join-Path $PSScriptRoot ('build\'+$name);$hash=(Get-FileHash -LiteralPath $file).Hash
  $existing=Join-Path $engine $name;$exists=Test-Path -LiteralPath $existing
- if($exists -and (Get-FileHash -LiteralPath $existing).Hash -ne $hash){throw "Another application owns a different $name in the engine folder. Install aborted."}
+ if(-not $ControlsOnly -and $exists -and (Get-FileHash -LiteralPath $existing).Hash -ne $hash){throw "Another application owns a different $name in the engine folder. Install aborted."}
  $previous=@($prior | Where-Object {$_.Name -eq $name -and $_.SHA256 -eq $hash})
- $owned=(-not $exists) -or ($previous.Count -eq 1 -and ($null -eq $previous[0].OwnedEngine -or $previous[0].OwnedEngine))
+ $owned=(-not $ControlsOnly) -and ((-not $exists) -or ($previous.Count -eq 1 -and ($null -eq $previous[0].OwnedEngine -or $previous[0].OwnedEngine)))
  [pscustomobject]@{Name=$name;SHA256=$hash;OwnedEngine=[bool]$owned}
 }
-if($CheckOnly){Write-Host "$action preflight passed: package, version and Samsung engine are compatible. No changes made.";return}
+if($CheckOnly){Write-Host "$action preflight passed$(if($ControlsOnly){' for controls only'}else{': package, version and Samsung engine are compatible'}). No changes made.";return}
 $principal=New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if(-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'Run Install.cmd or administrator PowerShell using the same Windows account as the existing installation.'}
-if(Get-Process Odyssey3DPlayer -ErrorAction SilentlyContinue){throw 'Stop conversion in Samsung player before installing.'}
+if(-not $ControlsOnly){
+ if(-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)){throw 'Run Install.cmd or administrator PowerShell using the same Windows account as the existing installation.'}
+ if(Get-Process Odyssey3DPlayer -ErrorAction SilentlyContinue){throw 'Stop conversion in Samsung player before installing.'}
+}
 # Graceful shutdown uses the unchanged IPC contract supported by 0.5.0.
 $running=@(Get-Process Any2Odd,Odyssey3DCompanion,OdysseyCompanionWorker -ErrorAction SilentlyContinue)
 if($running.Count){
@@ -53,7 +61,7 @@ New-Item -ItemType Directory -Path $stage | Out-Null
 $operations=@()
 foreach($name in @('USER-GUIDE.html','Uninstall.ps1','LICENSE','THIRD-PARTY-LICENSES.txt')){$operations+=[pscustomobject]@{Source=Join-Path $PSScriptRoot $name;Destination=Join-Path $app $name}}
 $operations+=[pscustomobject]@{Source=$binary;Destination=Join-Path $app 'Any2Odd.exe'}
-$operations+=[pscustomobject]@{Source=$binary;Destination=Join-Path $engine 'OdysseyCompanionWorker.exe'}
+if(-not $ControlsOnly){$operations+=[pscustomobject]@{Source=$binary;Destination=Join-Path $engine 'OdysseyCompanionWorker.exe'}}
 $operations+=[pscustomobject]@{Source=Join-Path $PSScriptRoot 'assets\Any2Odd.ico';Destination=Join-Path $app 'Any2Odd.ico'}
 foreach($dependency in $dependencies){
  $source=Join-Path $PSScriptRoot ('build\'+$dependency.Name)
@@ -61,7 +69,7 @@ foreach($dependency in $dependencies){
  if($dependency.OwnedEngine){$operations+=[pscustomobject]@{Source=$source;Destination=Join-Path $engine $dependency.Name}}
 }
 $dependencies | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $stage 'dependencies.json') -Encoding UTF8
-$record=[pscustomobject]@{Installed=(Get-Date).ToString('o');Version=$versionText;PreviousVersion=$(if($installed){$installed.Version.ToString()}else{$null});Action=$action;App=$app;Worker=(Join-Path $engine 'OdysseyCompanionWorker.exe');Hash=(Get-FileHash -LiteralPath $binary).Hash}
+$record=[pscustomobject]@{Installed=(Get-Date).ToString('o');Version=$versionText;PreviousVersion=$(if($installed){$installed.Version.ToString()}else{$null});Action=$action;App=$app;ControlsOnly=[bool]$ControlsOnly;Worker=$(if(-not $ControlsOnly){Join-Path $engine 'OdysseyCompanionWorker.exe'}else{$null});Hash=(Get-FileHash -LiteralPath $binary).Hash}
 $record | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $stage 'version.json') -Encoding UTF8
 $operations+=[pscustomobject]@{Source=Join-Path $stage 'dependencies.json';Destination=$manifest}
 $operations+=[pscustomobject]@{Source=Join-Path $stage 'version.json';Destination=Join-Path $app 'version.json'}
@@ -74,6 +82,7 @@ $registrationExisted=Test-Path -LiteralPath $registration;$oldValues=@{}
 if($registrationExisted){$key=Get-Item -LiteralPath $registration;foreach($name in $key.GetValueNames()){$oldValues[$name]=@{Value=$key.GetValue($name);Kind=$key.GetValueKind($name)}}}
 $uninstall='powershell.exe -NoProfile -ExecutionPolicy Bypass -File "'+(Join-Path $app 'Uninstall.ps1')+'"'
 $properties=@{DisplayName='Any2Odd';DisplayVersion=$versionText;Publisher='Zhandragon';InstallLocation=$app;DisplayIcon=(Join-Path $app 'Any2Odd.ico')+',0';UninstallString=$uninstall;URLInfoAbout='https://github.com/Zhandragon/Any2Odd'}
+if($ControlsOnly){$properties.DisplayName='Any2Odd (controls only)'}
 Invoke-Any2OddFileTransaction -Operations $operations -AfterCopy {
  New-Item -Path $registration -Force | Out-Null
  foreach($entry in $properties.GetEnumerator()){New-ItemProperty -LiteralPath $registration -Name $entry.Key -Value $entry.Value -PropertyType String -Force | Out-Null}
@@ -84,3 +93,4 @@ Invoke-Any2OddFileTransaction -Operations $operations -AfterCopy {
 }
 foreach($file in Get-ChildItem -LiteralPath $stage -File){Remove-Item -LiteralPath $file.FullName};Remove-Item -LiteralPath $stage
 Write-Host "Any2Odd $versionText $($action.ToLowerInvariant()) completed. Your settings and logs were kept. Open Any2Odd as your normal user. No reboot is needed."
+if($ControlsOnly){Write-Host 'Desktop controls are installed; 3D remains unavailable. After installing the supported Samsung Hub, run Install.cmd to add the conversion worker.'}

@@ -1,38 +1,35 @@
-# Any2Odd 0.7.0
+# Any2Odd 0.7.1
 
-Illustrated GitHub documentation, expanded written Help and explicit dependency/origin documentation, PortalAI-style repository presentation and sponsorship, and experimental macOS/Linux launch bundles.
+Fixes the installer hiding its actual error and adds a Windows controls-only installation for PCs without Odyssey Hub or a Samsung 3D display.
 
 ## Choose your download
 
 | Platform | Asset | Start after extraction |
 | --- | --- | --- |
-| Windows x64 — full Samsung Odyssey converter | `Any2Odd-0.7.0-windows-x64.zip` | `Install.cmd` |
-| macOS 13+, Intel / Apple silicon — **experimental, not tested on macOS** | `Any2Odd-0.7.0-macos-experimental.zip` | `Launch-macOS.command` |
-| Linux x86-64, glibc 2.34+ — **experimental, not tested on Linux** | `Any2Odd-0.7.0-linux-experimental.tar.gz` | `sh launch-linux.sh` |
+| Windows x64 | `Any2Odd-0.7.1-windows-x64.zip` | `Install-GUI.cmd` for controls only; `Install.cmd` for full conversion |
+| macOS 13+, Intel / Apple silicon — **experimental, not tested on macOS** | `Any2Odd-0.7.1-macos-experimental.zip` | `Launch-macOS.command` |
+| Linux x86-64, glibc 2.34+ — **experimental, not tested on Linux** | `Any2Odd-0.7.1-linux-experimental.tar.gz` | `sh launch-linux.sh` |
 
-Each archive has a matching `.sha256` file. Extract the whole archive and read its setup instructions.
+Each archive has a matching `.sha256` file. Extract the whole archive before running a launcher; GitHub's automatic Source code downloads require a build.
 
-## Help and presentation
+## Windows setup fix
 
-- Thirteen written Help topics explaining setting defaults and apply/save behavior, startup/display checks, troubleshooting, dependencies and updates. The original in-app text layout is retained.
-- Text-only in-app Help and offline HTML, plus light/dark screenshots in the README and [illustrated GitHub guide](https://github.com/Zhandragon/Any2Odd/blob/main/Documentation/README.md).
-- Explicit credit to Any2C1, the CubeVi C1 companion app that inspired the workflow. Any2C1/CubeStage/PortalAI are not dependencies. Samsung/Leia and Windows dependencies are explained separately.
-- Centered branding, interface galleries, PortalAI's original teal/gold GitHub Sponsors button and matching repository sponsorship configuration. Donation QR data and destinations are unchanged.
+- Both launchers keep the underlying error visible in the original console. Full setup checks prerequisites before requesting elevation and reports failures from the elevated installer. Elevation under a different Windows account is refused.
+- **Without Odyssey Hub:** run **Install-GUI.cmd**. It installs the themed desktop controls, tray, written Help and internal Donate, with desktop/Start menu shortcuts and an Installed apps entry. No administrator access, Samsung screen or Hub is needed; Windows 11 x64 24H2+ and the existing .NET runtime baseline still apply.
+- **Controls-only mode cannot convert to 3D.** It installs no worker and does not change Samsung's folders. Automatic conversion still checks prerequisites and leaves 3D off with a missing-engine/worker message. You may uncheck automatic conversion while exploring the controls.
+- **On the 3D computer:** use **Install.cmd** with the supported Samsung Hub installed. Upgrade from **0.5.0, 0.6.0 or 0.7.0 without uninstalling**. App/worker versions update together; preferences, logs and the original Samsung settings backup remain intact.
+- A controls-only installation can later become a full installation: configure the supported Samsung setup and run **Install.cmd** from the same or a newer release. Controls-only repair/removal needs no elevation and leaves Samsung files alone.
 
-## Experimental macOS and Linux scope
+Written Help and offline documentation explain both modes. Screenshots remain only in the [GitHub README and illustrated guide](https://github.com/Zhandragon/Any2Odd/blob/main/Documentation/README.md). Donation QR images and destinations are unchanged.
 
-**These versions are experimental and have not been tested on macOS or Linux.** They are small Python/Qt source launch bundles, not native self-contained installers. Provide Python 3.10–3.13; first launch downloads pinned PySide6 6.10.1 wheels into an application-local virtual environment.
+Windows capture, projection, click-through, overlay handling, renderer lifecycle and global shortcuts remain unchanged. Full 3D retains the exact Samsung engine compatibility check.
 
-The shared frontend provides themes, tray fallback, internal Help/Donate, SBS image viewing, red/cyan anaglyph conversion, eye swapping and PNG export. Optional live screen capture requires separate source/output screens; Wayland live output is disabled pending source/output exclusion verification. Native focus, capture permissions, tray and click-through behavior remain untested.
+## Experimental macOS and Linux
 
-**Samsung AI depth conversion, eye tracking and calibrated G90XF glasses-free output remain Windows-only.** Ordinary 2D stays flat in the portable build. It does not need Odyssey Hub, a Samsung monitor or Any2C1 for its image-viewing features. See [portable setup](https://github.com/Zhandragon/Any2Odd/blob/main/portable/START-HERE.md) and the [platform capability matrix](https://github.com/Zhandragon/Any2Odd/blob/main/Documentation/PLATFORMS.md).
+**Experimental and not tested on macOS or Linux.** Their runtime code is unchanged from 0.7.0; these bundles carry the updated version and written documentation. They are Python/Qt source launch bundles, not native self-contained installers. Provide Python 3.10–3.13; first launch downloads pinned PySide6 6.10.1 wheels into an application-local environment.
 
-## Windows update
-
-Upgrade from **0.5.0 or 0.6.0 without uninstalling**. Extract the Windows ZIP to a new folder and run `Install.cmd` using the same Windows account as the existing installation. The installer updates the app/worker in place and preserves preferences, logs and the original Samsung settings backup. The supported Samsung engine is still required.
-
-Windows capture, projection, click-through, overlay handling, renderer lifecycle and global shortcuts remain unchanged.
+They offer themed controls/tray, written Help/Donate, SBS image viewing, red/cyan anaglyph conversion, eye swapping and PNG export. Optional live capture requires separate source/output screens; Wayland live output is disabled. Native permissions, capture, focus, tray and click-through remain untested. **They do not implement Samsung AI depth, eye tracking or calibrated G90XF output.** Ordinary 2D stays flat. See [setup and limits](https://github.com/Zhandragon/Any2Odd/blob/main/portable/START-HERE.md).
 
 ## Validation
 
-Windows build, UI/Help resources, geometry, protected-rendering comparison, isolated upgrade/repair/rollback tests and package checks passed. Eight portable conversion/UI tests passed using Qt's offscreen platform on Windows; that is not native macOS/Linux acceptance. No Odyssey Hub, Samsung screen or Any2C1 was present on the development computer, and no new optical 3D test was performed.
+Windows build, headless UI/Help resources, geometry, documentation consistency and protected-rendering checks passed. Isolated installer tests cover controls-only install/repair/removal, promotion to full installation, engine checks, legacy upgrades, rollback, settings preservation and error delivery. UAC/elevated failure is simulated in the launcher test; no actual host installation or new optical 3D test was performed. This development PC has no Odyssey Hub, Samsung display or Any2C1. macOS/Linux have no native acceptance testing.

@@ -2,7 +2,7 @@
 
 # Illustrated Help
 
-Any2Odd 0.7.0 · Windows edition reference, with a separate experimental macOS/Linux topic.
+Any2Odd 0.7.1 · Windows edition reference, with a separate experimental macOS/Linux topic.
 
 [Repository](../README.md) · [Platform support](PLATFORMS.md) · [Donations](DONATIONS.md)
 
@@ -29,6 +29,10 @@ Any2Odd provides continuous desktop capture and controls for Samsung's installed
 The installer does not add Any2Odd to Windows sign-in startup. Launching the app and starting Windows are separate events. The default shown in the repository screenshots is an unsaved preview; the screenshot preview never starts conversion.
 
 Use the Source & input and Depth & behavior sections on the Controls page to adjust conversion. After changing capture, input, depth, pop-out or overlay preferences, click Apply settings / restart conversion. Help and Donate stay inside the controls window.
+
+**CONTROLS WITHOUT A 3D SETUP**
+
+Install-GUI.cmd installs the Windows controls, tray, Help and Donate without Hub or a Samsung display. It cannot perform 3D conversion. Automatic conversion still uses the normal prerequisite checks and reports the missing engine/worker; it leaves 3D off. Uncheck Convert automatically when this app opens if you only want to explore the controls. Later, install the supported Samsung setup and run Install.cmd to add full conversion without losing preferences.
 
 [Samsung monitor setup](https://www.samsung.com/uk/support/displays/how-to-use-3d-on-the-odyssey-3d-gaming-monitor/)
 
@@ -180,7 +184,7 @@ Automatic start, recovery and minimize-to-tray changes save immediately. Their e
 
 The desktop GUI, tray menu, settings, shortcuts, capture source, overlay positioning, click-through input handling and worker recovery are Any2Odd code. The capture feeds an off-screen surface; the output is excluded from capture to prevent feedback. Rendering stays on this computer; Any2Odd does not send captured frames to a hosted conversion service.
 
-**SAMSUNG ODYSSEY 3D HUB — REQUIRED**
+**SAMSUNG ODYSSEY 3D HUB — REQUIRED FOR WINDOWS 3D**
 
 Install Odyssey 3D Hub 1.5.1 with the exact supported ConversionWrapper.dll. Any2Odd loads that native library directly for AI depth, stereo conversion and output. It does not include Samsung's engine, AI models or calibration files. Both AI and side-by-side input depend on the installed engine. A Hub update that changes this DLL requires an Any2Odd compatibility update.
 
@@ -188,7 +192,7 @@ Install Odyssey 3D Hub 1.5.1 with the exact supported ConversionWrapper.dll. Any
 
 Any2Odd's code does not require the Hub's main window to stay open. Samsung/Leia background components and the camera must still be operational; the Hub may be needed to set up or initialize them. Stop the separate Odyssey3DPlayer before starting Any2Odd. Closing the Hub window and uninstalling Hub are very different: uninstalling removes required components.
 
-**LEIASR AND HARDWARE — REQUIRED**
+**LEIASR AND HARDWARE — REQUIRED FOR WINDOWS 3D**
 
 The installed LeiaSR runtime, eye tracking, monitor calibration and the G90XF's optical hardware produce the calibrated glasses-free image. Keep the display's USB upstream connected as well as DisplayPort. The software does not turn an ordinary 2D monitor into a glasses-free display.
 
@@ -202,7 +206,7 @@ The tested setup is G90XF + NVIDIA RTX 4090; other GPUs remain unvalidated. The 
 
 **INSTALLATION AND BUILD TOOLS**
 
-The prebuilt installer uses 64-bit Windows PowerShell 5.1 and administrator access to place the worker beside Samsung's engine. Run the app afterward as your normal user. Python, Node, Visual Studio and a separately installed CUDA Toolkit are not Any2Odd prebuilt-package prerequisites. Source builds use the Windows .NET compiler and pinned NuGet packages; regenerating documentation additionally uses Python 3. Internet access is needed to obtain software and for optional external links.
+The full Install.cmd installer uses 64-bit Windows PowerShell 5.1 and administrator access to place the worker beside Samsung's engine. Install-GUI.cmd instead installs controls only under your Windows account, without Hub, a Samsung display or elevation; it cannot convert to 3D and never installs a worker. Both modes need the same supported Windows/.NET baseline. Run the app afterward as your normal user. Python, Node, Visual Studio and a separately installed CUDA Toolkit are not Any2Odd prebuilt-package prerequisites. Source builds use the Windows .NET compiler and pinned NuGet packages; regenerating documentation additionally uses Python 3. Internet access is needed to obtain software and for optional external links.
 
 **ANY2C1 / PORTALAI**
 
@@ -238,7 +242,7 @@ Convert automatically when this app opens defaults to enabled. The app first reg
 
 **READ-ONLY INSTALLER CHECK**
 
-install.ps1 -CheckOnly checks package/version/engine compatibility. It does not run capture, confirm camera tracking, or verify optical 3D. Check ordinary Samsung playback on the target monitor when diagnosing a display problem.
+install.ps1 -CheckOnly checks full-install package/version/engine compatibility. Add -ControlsOnly for a read-only GUI-install check without requiring Hub. Neither check runs capture, confirms camera tracking, or verifies optical 3D. Check ordinary Samsung playback on the target monitor when diagnosing a display problem.
 
 <a id="origins"></a>
 
@@ -306,6 +310,10 @@ The macOS/Linux bundles are explicitly experimental and untested on their target
 
 ## Troubleshooting & logs
 
+**INSTALLER SAYS INSTALLATION DID NOT COMPLETE**
+
+Use the 0.7.1 or newer release ZIP and extract it fully. The launcher keeps the precise failure visible in the original console, including failures after elevation. Missing Odyssey Hub blocks full setup. For desktop controls on a PC without a 3D setup, run Install-GUI.cmd; 3D conversion will remain unavailable. For full setup, install the supported Samsung Hub first and run Install.cmd using the same Windows account as the existing installation. Do not bypass an incompatible-engine check.
+
 **NO 3D / CAMERA ERROR**
 
 Check USB upstream, DisplayPort, the 3D Stereo WebCam in Device Manager, primary-display selection and 3840 × 2160 resolution. Verify Samsung playback first and stop its separate conversion player.
@@ -336,17 +344,23 @@ Opens %LOCALAPPDATA%\Odyssey3DCompanion. companion.log records application event
 
 [![Donate is an internal page; Sponsor on GitHub opens the same maintainer profile as the repository button.](assets/donate-light.png)](assets/donate-light.png)
 
-**UPDATING FROM 0.5.0 OR 0.6.0**
+**UPDATING FROM 0.5.0, 0.6.0 OR 0.7.0**
 
 Download the new prebuilt Any2Odd ZIP from GitHub Releases and extract the entire package to a new folder. Run Install.cmd, or run install.ps1 in 64-bit administrator PowerShell using the same Windows account as the existing installation. Do not uninstall first.
 
 The installer reads installed executable/version metadata, reports install/upgrade/repair, asks the running Any2Odd instance to quit cleanly, and replaces the application and worker in their existing locations. Settings, logs and Samsung's original overlay-settings backup are preserved. The same version can be reinstalled to repair it; this installer refuses to replace a newer installed version unless -AllowDowngrade is explicitly passed. Do not run the old 0.5.0 installer to update a newer installation; it predates version checks.
 
-Use install.ps1 -CheckOnly for a read-only compatibility/version check. No reboot is required. Installation requires the supported Samsung engine; it does not patch Samsung binaries.
+Use install.ps1 -CheckOnly for a read-only full-install compatibility/version check. No reboot is required. Full installation requires the supported Samsung engine; it does not patch Samsung binaries.
+
+**CONTROLS-ONLY INSTALLATION**
+
+Without Hub or a Samsung display, use Install-GUI.cmd (or install.ps1 -ControlsOnly) for the desktop GUI, tray, written Help and Donate. It needs no administrator access and appears as Any2Odd (controls only) in Installed apps. It installs no worker and provides no 3D conversion. Use this same launcher for controls-only updates or repair; add -ControlsOnly to -CheckOnly for read-only validation.
+
+Later, install the supported Samsung setup and run Install.cmd from the same or a newer release to add full conversion in place, preserving settings. Controls-only setup refuses to replace an installed full worker; use Install.cmd on your 3D computer to update the app and worker together. The launcher shows exact prerequisite/elevated errors and rejects elevation under a different Windows account.
 
 **UNINSTALL**
 
-Use Any2Odd in Windows Installed apps. It removes its own files and unchanged engine dependencies it owns. It retains Samsung software, preferences, logs and the original Samsung overlay-settings backup. It does not restore the backup over newer Samsung preferences.
+Use Any2Odd in Windows Installed apps. Full-mode removal deletes its own files and unchanged engine dependencies it owns. Controls-only removal needs no elevation and never deletes anything from Samsung's folders. It retains Samsung software, preferences, logs and the original Samsung overlay-settings backup. It does not restore the backup over newer Samsung preferences.
 
 **DONATE**
 

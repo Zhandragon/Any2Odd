@@ -16,7 +16,7 @@ Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Documentation') -Destination $s
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'assets\donations') -Destination (Join-Path $stage 'assets') -Recurse
 New-Item -ItemType Directory -Path (Join-Path $stage 'portable') -Force | Out-Null
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'portable\START-HERE.md') -Destination (Join-Path $stage 'portable')
-foreach($name in @('README.md','USER-GUIDE.html','CHANGELOG.md','TESTING.md','LICENSE','THIRD-PARTY-LICENSES.txt','install.ps1','InstallSupport.ps1','Install.cmd','VERSION','Uninstall.ps1')){Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $stage}
+foreach($name in @('README.md','USER-GUIDE.html','CHANGELOG.md','TESTING.md','LICENSE','THIRD-PARTY-LICENSES.txt','install.ps1','InstallSupport.ps1','Install.cmd','Install-GUI.cmd','Install-Launcher.ps1','VERSION','Uninstall.ps1')){Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $stage}
 $zip=Join-Path $dist ('Any2Odd-'+$version+'-windows-x64.zip')
 Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -Force
 $hash=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1 — Visible setup errors and controls-only installation
+
+- Keep prerequisite and elevated-installation errors in the original launcher console. Check prerequisites before UAC and reject elevation under a different Windows account.
+- Add `Install-GUI.cmd` / `install.ps1 -ControlsOnly` for the desktop controls, tray, written Help and Donate without Odyssey Hub or administrator access. No conversion worker is installed; 3D stays unavailable.
+- Record controls-only installation explicitly, support repair/upgrade/removal and later full installation, preserve preferences, and leave Samsung directories untouched during controls-only installation/removal.
+- Keep full app/worker updates together and retain the exact engine compatibility check, downgrade protection and transactional rollback.
+- Document both installation paths. Windows rendering/overlay code and portable runtime code are unchanged. macOS/Linux remain **experimental and not tested on those operating systems**.
+
 ## 0.7.0 — Documentation and experimental portable editions
 
 - Expand written Help to thirteen shared topics covering defaults, apply/save behavior, display checks, dependencies, troubleshooting and upgrades. Keep the original text-only app layout and offline guide; add real light/dark screenshots to the GitHub README and documentation.

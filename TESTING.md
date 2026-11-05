@@ -1,5 +1,12 @@
 # Testing
 
+## 0.7.1 installer validation
+
+- `tests/test-controls-install.ps1` runs the real install/uninstall scripts with destinations redirected into temporary folders and an isolated registry key. It checks read-only preflight, missing-Hub guidance, controls-only install/repair/removal without elevation, no Samsung-folder writes or deletions, preserved settings, promotion to full installation, engine-hash enforcement and refusal to split a full app/worker update. Engine compatibility is simulated only for the promotion step; no Samsung engine is loaded.
+- `tests/test-install-launcher.ps1` uses a fake installer to verify visible preflight failures, precise worker reports, controls-only launch without elevation, different-account rejection and delivery of an elevated failure back to the original console. Elevation is simulated; no UAC/install is performed on the host.
+- Existing isolated transaction/rollback and full-install tests cover upgrade from the published 0.5.0 and 0.7.0 packages, version detection, repair, dependency ownership and preserved settings. Build, headless UI/Help resources, geometry, documentation export and protected-rendering checks are repeated for the release.
+- Actual host preflight passes in controls-only mode and explains the missing Hub in full mode. The app is not installed on this development computer. Real UAC, optical 3D and native macOS/Linux acceptance remain untested for this release; the portable runtime is unchanged.
+
 ## 0.7.0 validation and platform limits
 
 **macOS and Linux distributions are experimental and not tested on those operating systems.** Tests below run on Windows without Odyssey Hub, a Samsung 3D display or Any2C1.
